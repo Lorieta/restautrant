@@ -1,0 +1,15 @@
+<div class="home">
+  <% if logged_in? %>
+    <h1>Welcome back, <%= current_user.name %>!</h1>
+    <p>
+      View your profile: <%= link_to 'My Profile', user_path(current_user) %>
+    </p>
+   
+    <%= button_to 'Logout', logout_path, method: :delete, class: 'btn btn-secondary' %>
+  <% else %>
+    <h1>Welcome to Restaurant Reservation</h1>
+    <p>
+      Please <%= link_to 'Log in', login_path %> or <%= link_to 'Sign up', signup_path %> to start making reservations.
+    </p>
+  <% end %>
+</div>

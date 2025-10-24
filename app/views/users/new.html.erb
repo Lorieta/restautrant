@@ -1,0 +1,10 @@
+<h2>Sign Up</h2>
+<% user = @user || User.new %>
+<%= form_with model: user, local: true do |f| %>
+  <p>Name: <%= f.text_field :name %></p>
+  <p>Email: <%= f.email_field :email %></p>
+  <p>Phone: <%= f.text_field :phone %></p>
+  <p>Password: <%= f.password_field :password %></p>
+  <p>Confirm Password: <%= f.password_field :password_confirmation %></p>
+  <%= f.submit "Register" %>
+<% end %>
