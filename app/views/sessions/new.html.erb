@@ -1,6 +1,9 @@
 <h2>Login</h2>
+
+<%= render 'shared/error_messages', object: @login_resource if @login_resource.present? %>
+
 <%= form_with url: login_path, local: true do |f| %>
-  <p>Email: <%= f.email_field :email, name: "session[email]" %></p>
+  <p>Email: <%= f.email_field :email, name: "session[email]", value: (@login_resource&.email || '') %></p>
   <p>Password: <%= f.password_field :password, name: "session[password]" %></p>
   <%= f.submit "Log in" %>
 <% end %>

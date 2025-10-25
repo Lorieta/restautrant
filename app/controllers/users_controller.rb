@@ -1,14 +1,25 @@
 class UsersController < ApplicationController
+  before_action :require_admin, only: [:admin, :index]
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :require_same_user_or_admin, only: [:edit, :update, :destroy]
+  before_action :require_login, only: [:edit, :update, :destroy]
+
   def home
   end
+
   def new
     @user = User.new
+  end
+
+  def index
+    # Admin-only list of users
+    @users = User.all
   end
 
   def create
     @user = User.new(user_params)
     # Do not allow clients to set their role via params (prevents privilege escalation)
-    @user.role = "user" unless @user.role.present?
+    @user.role = 'user' unless @user.role.present?
     if @user.save
       log_in @user
       redirect_to root_path, notice: "Welcome, #{@user.name}!"
@@ -18,13 +29,60 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
+    # @user is set by set_user
+  end
+
+  def edit
+    # @user is set by set_user
+  end
+
+  def update
+    # Permit blank password: if password fields are blank, remove them so validations don't force change
+    update_params = user_params.dup
+    if update_params[:password].blank?
+      update_params.delete(:password)
+      update_params.delete(:password_confirmation)
+    end
+
+    if @user.update(update_params)
+      redirect_to @user, notice: "Profile updated successfully."
+    else
+      render :edit
+    end
+  end
+
+  def destroy
+    # Only admins or the user themselves can delete (enforced by require_same_user_or_admin)
+    @user.destroy
+    redirect_to root_path, notice: "User deleted."
+  end
+
+  def admin
+    # Add any admin dashboard logic here
+    @users = User.all
+    @reservations = Reservation.all
+    @tables = Table.all
+    @timeslots = Timeslot.all
   end
 
   private
 
   def user_params
-    # Do NOT permit :role here — roles must be assigned server-side only
-    params.require(:user).permit(:name, :email, :phone, :password, :password_confirmation)
+    # Permit :role only when the current_user is an admin. Regular users cannot set their role.
+    permitted = [:name, :email, :phone, :password, :password_confirmation]
+    permitted << :role if current_user&.admin?
+
+    params.require(:user).permit(permitted)
+  end
+
+  def set_user
+    @user = User.find(params[:id])
+  end
+
+  def require_same_user_or_admin
+    return if current_user == @user || current_user&.admin?
+
+    flash[:alert] = "You are not authorized to perform this action."
+    redirect_to root_path
   end
 end

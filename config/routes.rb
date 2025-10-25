@@ -18,11 +18,12 @@ Rails.application.routes.draw do
   resources :tables
   resources :timeslots
 
-  root "users#home"
+  root "application#home"
   get    "/login",  to: "sessions#new"
   get    "/signup", to: "users#new",     as: :signup
   post   "/login",  to: "sessions#create"
   delete "/logout", to: "sessions#destroy"
+  get    "/admin",  to: "users#admin",   as: :admin_dashboard
   # Defines the root path route ("/")
   # root "posts#index"
 end
