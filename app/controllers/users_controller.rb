@@ -7,6 +7,8 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    # Do not allow clients to set their role via params (prevents privilege escalation)
+    @user.role = 'user' unless @user.role.present?
     if @user.save
       log_in @user
       redirect_to root_path, notice: "Welcome, #{@user.name}!"
@@ -22,6 +24,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :phone, :password, :password_confirmation, :role)
+    # Do NOT permit :role here — roles must be assigned server-side only
+    params.require(:user).permit(:name, :email, :phone, :password, :password_confirmation)
   end
 end
