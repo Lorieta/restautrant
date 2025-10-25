@@ -18,9 +18,16 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    # Do not allow clients to set their role via params (prevents privilege escalation)
-    @user.role = 'user' unless @user.role.present?
+    # For public signups ensure the DB column stores the 'user' role (0).
+    # Due to enum handling differences, we'll enforce the raw DB value after create
+    # for non-admin signups to avoid accidentally creating admin accounts.
     if @user.save
+      unless current_user&.admin?
+        # write raw integer value directly to the DB to avoid enum mapping quirks
+        @user.update_column(:role, User.roles[:user]) rescue nil
+        @user.reload
+      end
+
       log_in @user
       redirect_to root_path, notice: "Welcome, #{@user.name}!"
     else
@@ -47,6 +54,8 @@ class UsersController < ApplicationController
     if @user.update(update_params)
       redirect_to @user, notice: "Profile updated successfully."
     else
+      # Surface validation feedback so the user understands why the update failed
+      flash.now[:alert] = @user.errors.full_messages.to_sentence if @user.errors.any?
       render :edit
     end
   end

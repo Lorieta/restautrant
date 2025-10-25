@@ -29,9 +29,19 @@
         <ul class="list-group">
           <% @user.reservations.order(created_at: :desc).each do |r| %>
             <li class="list-group-item">
-              <strong><%= r.name.presence || "Reservation" %></strong>
-              <div><%= l(r.time) if r.respond_to?(:time) && r.time.present? %></div>
+              <strong>Reservation for <%= r.table&.name || 'Table' %></strong>
+              <div>
+                <% if r.timeslot %>
+                  <%= r.timeslot.date.strftime('%B %-d, %Y') %>
+                  &nbsp;from&nbsp;<%= r.timeslot.start_time.strftime('%-I:%M %p') %>
+                  &nbsp;to&nbsp;<%= r.timeslot.end_time.strftime('%-I:%M %p') %>
+                <% end %>
+              </div>
+              <div>People: <%= r.num_people %></div>
               <%= link_to 'View', reservation_path(r), class: 'btn btn-sm btn-outline-secondary ms-2' if defined?(reservation_path) %>
+              <% if current_user == @user && cancellable?(r) %>
+                <%= link_to 'Cancel', reservation_path(r), method: :delete, data: { confirm: 'Cancel this reservation?' }, class: 'btn btn-sm btn-danger ms-2' %>
+              <% end %>
             </li>
           <% end %>
         </ul>

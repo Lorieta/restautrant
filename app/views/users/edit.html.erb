@@ -22,9 +22,14 @@
         </div>
 
         <% if current_user&.admin? %>
+          <% sole_admin = @user.admin? && User.where.not(id: @user.id).where(role: User.roles[:admin]).count.zero? %>
           <div class="mb-3">
             <%= f.label :role, class: 'form-label' %>
-            <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] }, {}, class: 'form-select' %>
+            <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] }, {}, { class: 'form-select', disabled: sole_admin } %>
+            <% if sole_admin %>
+              <%= hidden_field_tag 'user[role]', @user.role %>
+              <div class="text-danger small mt-2">This user is the last admin. Create another admin before changing this user's role.</div>
+            <% end %>
           </div>
         <% end %>
 
