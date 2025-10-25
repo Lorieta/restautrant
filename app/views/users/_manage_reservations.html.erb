@@ -34,7 +34,16 @@
               <td><%= r.num_people %></td>
               <td>
                 <%= link_to 'Edit', edit_reservation_path(r), class: 'btn btn-sm btn-outline-primary' %>
-                <%= link_to 'Delete', reservation_path(r), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-outline-danger' %>
+                <%= link_to 'Delete', reservation_path(r),
+                            method: :delete,
+                            class: 'btn btn-sm btn-outline-danger',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              confirm_modal_title: 'Delete Reservation',
+                              confirm_modal_message: "Delete reservation ##{r.id}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
               </td>
             </tr>
           <% end %>

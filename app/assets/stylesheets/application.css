@@ -258,6 +258,76 @@ header {
     width: 100%;
 }
 
+/* Confirm modal */
+.confirm-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease-in-out;
+    z-index: 1050;
+}
+
+.confirm-modal-backdrop.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.confirm-modal-dialog {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+    max-width: 420px;
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.confirm-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.confirm-modal-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.confirm-modal-close {
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.confirm-modal-body {
+    color: #4b5563;
+    font-size: 0.95rem;
+}
+
+.confirm-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.confirm-modal-footer .btn {
+    min-width: 90px;
+}
+
 /* Sidebar styles */
 .app-sidebar {
     background: #f7fafc;

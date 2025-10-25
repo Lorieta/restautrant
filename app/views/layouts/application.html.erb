@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <%= full_title(yield(:title)) %>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Restaurant Reservation">
@@ -23,7 +22,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body data-controller="confirm-modal">
     <header>
     <%= render 'layouts/nav_bar' %>
   
@@ -34,5 +33,6 @@
 
      
     </main>
+    <%= render 'shared/confirm_modal' %>
   </body>
 </html>

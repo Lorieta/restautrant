@@ -27,7 +27,16 @@
               <td><%= t.seats %></td>
               <td>
                 <%= link_to 'Edit', edit_table_path(t), class: 'btn btn-sm btn-outline-primary' %>
-                <%= link_to 'Delete', table_path(t), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-outline-danger' %>
+                <%= link_to 'Delete', table_path(t),
+                            method: :delete,
+                            class: 'btn btn-sm btn-outline-danger',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              confirm_modal_title: 'Delete Table',
+                              confirm_modal_message: "Delete table #{t.name}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
               </td>
             </tr>
           <% end %>

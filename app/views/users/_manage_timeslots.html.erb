@@ -29,7 +29,16 @@
               <td><%= ts.end_time.strftime('%H:%M') rescue '' %></td>
               <td>
                 <%= link_to 'Edit', edit_timeslot_path(ts), class: 'btn btn-sm btn-outline-primary' %>
-                <%= link_to 'Delete', timeslot_path(ts), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-outline-danger' %>
+                <%= link_to 'Delete', timeslot_path(ts),
+                            method: :delete,
+                            class: 'btn btn-sm btn-outline-danger',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              confirm_modal_title: 'Delete Timeslot',
+                              confirm_modal_message: "Delete timeslot on #{ts.date}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
               </td>
             </tr>
           <% end %>

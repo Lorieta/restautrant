@@ -123,9 +123,7 @@
       <div class="admin-manage mt-4" id="manage-sections" data-controller="collapsible" data-collapsible-expanded-value="true">
         <div class="admin-manage-header">
           <h2>Manage Resources</h2>
-          <button type="button" class="btn btn-secondary btn-sm" data-action="click->collapsible#toggle" data-collapsible-target="toggle" aria-controls="manage-resources-content" aria-expanded="true">
-            Hide
-          </button>
+       
         </div>
         <div class="admin-manage-content" id="manage-resources-content" data-collapsible-target="content">
           <%= render 'manage_users', users: (@users || []) %>

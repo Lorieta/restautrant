@@ -1,0 +1,15 @@
+<div class="confirm-modal-backdrop" data-confirm-modal-target="backdrop" hidden>
+  <div class="confirm-modal-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-describedby="confirm-modal-message">
+    <div class="confirm-modal-header">
+      <h3 class="confirm-modal-title" id="confirm-modal-title" data-confirm-modal-target="title">Confirm Action</h3>
+      <button type="button" class="confirm-modal-close" aria-label="Close" data-action="confirm-modal#cancel">&times;</button>
+    </div>
+    <div class="confirm-modal-body">
+      <p id="confirm-modal-message" data-confirm-modal-target="message">Are you sure you want to continue?</p>
+    </div>
+    <div class="confirm-modal-footer">
+      <button type="button" class="btn btn-secondary" data-action="confirm-modal#cancel" data-confirm-modal-target="cancelButton">Cancel</button>
+      <button type="button" class="btn btn-danger" data-confirm-modal-target="confirmButton" data-action="confirm-modal#confirm">Confirm</button>
+    </div>
+  </div>
+</div>

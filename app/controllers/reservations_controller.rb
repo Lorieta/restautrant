@@ -81,8 +81,11 @@ class ReservationsController < ApplicationController
   private
 
   def set_reservation
-    # Ensure users can only access their own reservations
-    @reservation = current_user.reservations.find(params[:id])
+    if current_user.admin?
+      @reservation = Reservation.find(params[:id])
+    else
+      @reservation = current_user.reservations.find(params[:id])
+    end
   end
 
   def reservation_params
