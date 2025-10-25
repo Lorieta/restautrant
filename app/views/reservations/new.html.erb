@@ -5,12 +5,12 @@
 <%= form_with model: @reservation, local: true do |f| %>
   <p>
     <strong>Table:</strong><br>
-    <%= f.collection_select :table_id, @tables, :id, :name, prompt: "Select a Table" %>
+    <%= f.collection_select :table_id, @tables, :id, :name, { prompt: "Select a Table" }, { id: 'reservation_table_id' } %>
   </p>
 
   <p>
     <strong>Timeslot:</strong><br>
-    <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')} (#{available_tables_count(t)} available)" }, prompt: "Select a Timeslot" %>
+    <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')} (#{available_tables_count(t)} available)" }, { prompt: "Select a Timeslot", selected: params[:timeslot_id] }, { id: 'reservation_timeslot_id' } %>
   </p>
 
   <p>

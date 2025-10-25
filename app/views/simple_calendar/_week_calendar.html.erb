@@ -18,8 +18,8 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <% date_range.slice(0, 7).each do |day| %>
-          <th><%= t('date.abbr_day_names')[day.wday] %></th>
+        <% (0..6).each do |day_index| %>
+          <th><%= t('date.abbr_day_names')[day_index] %></th>
         <% end %>
       </tr>
     </thead>
@@ -29,7 +29,7 @@
         <tr>
           <% week.each do |day| %>
             <%= content_tag :td, class: calendar.td_classes_for(day) do %>
-              <% instance_exec(day, calendar.sorted_events_for(day), &passed_block) %>
+              <% passed_block.call(day, calendar.sorted_events_for(day)) %>
             <% end %>
           <% end %>
         </tr>

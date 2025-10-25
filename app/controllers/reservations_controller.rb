@@ -27,7 +27,7 @@ class ReservationsController < ApplicationController
     @reservation = current_user.reservations.build(reservation_params)
 
     if @reservation.save
-      redirect_to @reservation, notice: "Reservation created successfully!"
+      redirect_to @reservation, notice: "Reservation created successfully!", status: :see_other
     else
       # Re-populate helper objects when re-rendering the form
       @timeslots = Timeslot.order(:date, :start_time)
@@ -37,7 +37,7 @@ class ReservationsController < ApplicationController
       else
         @tables = Table.all
       end
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -48,11 +48,11 @@ class ReservationsController < ApplicationController
 
   def update
     if @reservation.update(reservation_params)
-      redirect_to @reservation, notice: "Reservation updated successfully!"
+      redirect_to @reservation, notice: "Reservation updated successfully!", status: :see_other
     else
       @tables = Table.all
       @timeslots = Timeslot.all
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -69,13 +69,13 @@ class ReservationsController < ApplicationController
       )
 
       if start_of_reservation < 2.hours.from_now
-        redirect_to reservations_path, alert: "Cannot cancel reservations less than 2 hours before the start time."
+        redirect_to reservations_path, alert: "Cannot cancel reservations less than 2 hours before the start time.", status: :see_other
         return
       end
     end
 
     @reservation.destroy
-    redirect_to reservations_path, notice: "Reservation canceled."
+    redirect_to reservations_path, notice: "Reservation canceled.", status: :see_other
   end
 
   private

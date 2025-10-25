@@ -52,11 +52,11 @@ class UsersController < ApplicationController
     end
 
     if @user.update(update_params)
-      redirect_to @user, notice: "Profile updated successfully."
+      redirect_to @user, notice: "Profile updated successfully.", status: :see_other
     else
       # Surface validation feedback so the user understands why the update failed
       flash.now[:alert] = @user.errors.full_messages.to_sentence if @user.errors.any?
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 

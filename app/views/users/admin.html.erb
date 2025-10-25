@@ -80,22 +80,68 @@
       
       <div class="mt-4">
         <h2>Reservation Calendar</h2>
-        <%= month_calendar do |date| %>
-          <div class="day">
-            <div class="date"><%= date.day %></div>
-            <% reservations = @reservations_by_date[date] || [] %>
-            <% if reservations.any? %>
-              <% reservations.each do |res| %>
-                <div class="reservation-item">
-                  <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
-                  <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
-                </div>
-              <% end %>
-            <% else %>
-              <div class="text-muted">No reservations</div>
+        
+        <!-- View switcher -->
+        <div style="margin-bottom: 1rem;">
+          <%= link_to 'Day', admin_dashboard_path(view: 'day'), class: "btn btn-sm #{params[:view] == 'day' ? 'btn-primary' : 'btn-secondary'}" %>
+          <%= link_to 'Week', admin_dashboard_path(view: 'week'), class: "btn btn-sm #{params[:view] == 'week' ? 'btn-primary' : 'btn-secondary'}" %>
+          <%= link_to 'Month', admin_dashboard_path(view: nil), class: "btn btn-sm #{params[:view].blank? || params[:view] == 'month' ? 'btn-primary' : 'btn-secondary'}" %>
+        </div>
+        
+        <div style="max-width: 1400px; overflow-x: auto;">
+          <% if params[:view] == 'day' %>
+            <%= calendar(number_of_days: 1) do |date| %>
+              <div class="day">
+                <div class="date"><%= date.day %></div>
+                <% reservations = @reservations_by_date[date] || [] %>
+                <% if reservations.any? %>
+                  <% reservations.each do |res| %>
+                    <div class="reservation-item">
+                      <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
+                      <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
+                    </div>
+                  <% end %>
+                <% else %>
+                  <div class="text-muted" style="font-size: 0.8rem;">No reservations</div>
+                <% end %>
+              </div>
             <% end %>
-          </div>
-        <% end %>
+          <% elsif params[:view] == 'week' %>
+            <%= week_calendar(number_of_weeks: 1) do |date| %>
+              <div class="day">
+                <div class="date"><%= date.day %></div>
+                <% reservations = @reservations_by_date[date] || [] %>
+                <% if reservations.any? %>
+                  <% reservations.each do |res| %>
+                    <div class="reservation-item">
+                      <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
+                      <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
+                    </div>
+                  <% end %>
+                <% else %>
+                  <div class="text-muted" style="font-size: 0.8rem;">No reservations</div>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <%= month_calendar do |date| %>
+              <div class="day">
+                <div class="date"><%= date.day %></div>
+                <% reservations = @reservations_by_date[date] || [] %>
+                <% if reservations.any? %>
+                  <% reservations.each do |res| %>
+                    <div class="reservation-item">
+                      <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
+                      <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
+                    </div>
+                  <% end %>
+                <% else %>
+                  <div class="text-muted" style="font-size: 0.8rem;">No reservations</div>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>

@@ -73,10 +73,16 @@ header {
 }
 
 .simple-calendar th {
-    background: #f1f5f9;
+    /* Calendar header: brand color, white text, centered */
+    background: #0d6efd;
+    /* primary blue */
+    color: #ffffff;
     padding: 8px;
     text-align: left;
-    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .simple-calendar td {
@@ -89,10 +95,6 @@ header {
 .simple-calendar .date {
     font-weight: 600;
     margin-bottom: 6px;
-}
-
-.day {
-    display: block;
 }
 
 .timeslot,
