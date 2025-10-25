@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     # Do not allow clients to set their role via params (prevents privilege escalation)
-    @user.role = 'user' unless @user.role.present?
+    @user.role = "user" unless @user.role.present?
     if @user.save
       log_in @user
       redirect_to root_path, notice: "Welcome, #{@user.name}!"
