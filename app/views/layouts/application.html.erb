@@ -9,6 +9,17 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <style>
+      /* Inline calendar header styles: simple color, font, and centered alignment */
+      .simple-calendar th {
+        background: #0d6efd; /* primary blue */
+        color: #ffffff;
+        text-align: center;
+        vertical-align: middle;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-weight: 700;
+      }
+    </style>
     <%= javascript_importmap_tags %>
   </head>
 

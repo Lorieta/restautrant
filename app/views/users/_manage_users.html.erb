@@ -1,0 +1,40 @@
+<div class="admin-manage-section mt-3" id="manage-users" data-controller="collapsible" data-collapsible-expanded-value="true">
+  <div class="admin-manage-section-header">
+    <h3>Users</h3>
+    <button type="button" class="btn btn-secondary btn-sm" data-action="click->collapsible#toggle" data-collapsible-target="toggle" aria-controls="manage-users-content" aria-expanded="true">
+      Hide
+    </button>
+  </div>
+  <div class="admin-manage-section-body" id="manage-users-content" data-collapsible-target="content">
+    <div class="mb-2">
+      <%= link_to 'New User', new_user_path, class: 'btn btn-sm btn-primary' %>
+    </div>
+    <% if users.any? %>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.order(:id).each do |u| %>
+            <tr>
+              <td><%= u.id %></td>
+              <td><%= u.name %></td>
+              <td><%= u.email %></td>
+              <td>
+                <%= link_to 'Edit', edit_user_path(u), class: 'btn btn-sm btn-outline-primary' %>
+                <%= link_to 'Delete', user_path(u), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-outline-danger' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No users found.</p>
+    <% end %>
+  </div>
+</div>

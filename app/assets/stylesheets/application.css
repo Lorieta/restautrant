@@ -26,6 +26,319 @@ header {
     margin-bottom: 1rem;
 }
 
+/* Navbar (simple, lightweight styling) */
+.navbar {
+    background: transparent;
+    /* let header background show through */
+    padding: 0;
+}
+
+.navbar .container {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: #0d6efd;
+    /* brand blue */
+    font-size: 1.05rem;
+    text-decoration: none;
+}
+
+.navbar-nav .nav-link {
+    color: #495057;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.95rem;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+    color: #0d6efd;
+}
+
+.navbar .btn-link {
+    color: #495057;
+    text-decoration: none;
+}
+
+/* Ensure the toggler sits flush on small screens */
+.navbar-toggler {
+    border: none;
+    display: none;
+    /* always show horizontal nav; hide collapse toggler */
+}
+
+/* Force a horizontal navbar: always display nav items inline (flex row) */
+.navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-nav {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.navbar-nav .nav-item {
+    display: inline-block;
+}
+
+/* Make sure the brand + nav spacing is comfortable on small screens */
+.navbar .container {
+    gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Admin two-column layout */
+.admin-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    min-height: 80vh;
+}
+
+.admin-sidebar-col {
+    width: 220px;
+    flex: 0 0 220px;
+}
+
+.admin-main-col {
+    flex: 1 1 auto;
+}
+
+/* Admin summary cards */
+.admin-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-summary-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    flex: 1 1 220px;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.admin-summary-card-title {
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #6c757d;
+    margin: 0;
+}
+
+.admin-summary-card-count {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d6efd;
+}
+
+.admin-summary-card-action {
+    margin-top: auto;
+}
+
+/* Admin calendar */
+.admin-calendar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+}
+
+.admin-calendar-switcher {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.admin-calendar-wrapper {
+    max-width: 1400px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-calendar-wrapper .simple-calendar {
+    margin: 0 auto;
+}
+
+/* Admin manage section */
+.admin-manage {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    padding: 1.25rem;
+}
+
+.admin-manage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.admin-manage-content {
+    margin-top: 1rem;
+}
+
+.admin-manage-section {
+    background: #f8fafc;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+}
+
+.admin-manage-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.admin-manage-section-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.admin-manage-section-body {
+    margin-top: 0.75rem;
+    text-align: left;
+}
+
+/* Admin reservations toggle */
+.admin-reservations {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    padding: 1.25rem;
+}
+
+.admin-reservations-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.admin-reservations-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-reservations-switch-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6c757d;
+}
+
+.admin-reservations-list {
+    margin-top: 1.5rem;
+    text-align: left;
+}
+
+.admin-reservations .admin-calendar {
+    margin-top: 0.75rem;
+    width: 100%;
+}
+
+/* Sidebar styles */
+.app-sidebar {
+    background: #f7fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+    height: 100%;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.brand-square {
+    width: 16px;
+    height: 16px;
+    background: #ff6b6b;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.brand-text {
+    font-weight: 700;
+    color: #2b2f36;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-link {
+    color: #475569;
+    text-decoration: none;
+    display: block;
+    padding: 0.45rem 0.6rem;
+    border-radius: 6px;
+}
+
+.sidebar-link:hover {
+    background: #fff;
+    color: #0d6efd;
+}
+
+.sidebar-footer {
+    margin-top: 1.5rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e6eef8;
+}
+
+/* Responsive: collapse sidebar on small screens */
+@media (max-width: 768px) {
+    .admin-wrapper {
+        flex-direction: column;
+    }
+
+    .admin-sidebar-col {
+        width: 100%;
+        flex: 0 0 auto;
+    }
+}
+
 /* Simple buttons */
 .btn {
     display: inline-block;
