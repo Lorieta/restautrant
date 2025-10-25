@@ -11,16 +11,7 @@ class ReservationsController < ApplicationController
 
   def new
     @reservation = Reservation.new
-    @timeslots = Timeslot.order(:date, :start_time)
-
-    # If a timeslot is pre-selected (e.g., user clicked a slot), show only available tables
-    if params[:timeslot_id].present?
-      @selected_timeslot = Timeslot.find_by(id: params[:timeslot_id])
-      reserved_table_ids = Reservation.where(timeslot_id: @selected_timeslot)&.pluck(:table_id) || []
-      @tables = Table.where.not(id: reserved_table_ids)
-    else
-      @tables = Table.all
-    end
+    prepare_form_dependencies(selected_timeslot_id: params[:timeslot_id])
   end
 
   def create
@@ -30,13 +21,7 @@ class ReservationsController < ApplicationController
       redirect_to @reservation, notice: "Reservation created successfully!", status: :see_other
     else
       # Re-populate helper objects when re-rendering the form
-      @timeslots = Timeslot.order(:date, :start_time)
-      if @reservation.timeslot
-        reserved_table_ids = Reservation.where(timeslot_id: @reservation.timeslot)&.pluck(:table_id) || []
-        @tables = Table.where.not(id: reserved_table_ids)
-      else
-        @tables = Table.all
-      end
+      prepare_form_dependencies(selected_timeslot_id: @reservation.timeslot_id)
       render :new, status: :unprocessable_entity
     end
   end
@@ -90,5 +75,35 @@ class ReservationsController < ApplicationController
 
   def reservation_params
     params.require(:reservation).permit(:table_id, :timeslot_id, :num_people)
+  end
+
+  def prepare_form_dependencies(selected_timeslot_id: nil)
+    @selected_timeslot = nil
+
+    @timeslots = Timeslot.where("date >= ?", Date.current).order(:date, :start_time)
+    @timeslots_by_date = @timeslots.group_by(&:date).transform_values { |slots| slots.sort_by(&:start_time) }
+
+    if selected_timeslot_id.present?
+      @selected_timeslot = Timeslot.find_by(id: selected_timeslot_id)
+
+      if @selected_timeslot
+        @timeslots_by_date[@selected_timeslot.date] ||= []
+
+        unless @timeslots_by_date[@selected_timeslot.date].any? { |slot| slot.id == @selected_timeslot.id }
+          @timeslots_by_date[@selected_timeslot.date] << @selected_timeslot
+          @timeslots_by_date[@selected_timeslot.date].sort_by!(&:start_time)
+        end
+
+        @timeslots = (@timeslots + [ @selected_timeslot ]).uniq { |slot| slot.id }
+        @timeslots.sort_by! { |slot| [ slot.date, slot.start_time ] }
+      end
+    end
+
+    if @selected_timeslot
+      reserved_table_ids = Reservation.where(timeslot_id: @selected_timeslot.id).pluck(:table_id)
+      @tables = reserved_table_ids.any? ? Table.where.not(id: reserved_table_ids) : Table.all
+    else
+      @tables = Table.all
+    end
   end
 end
