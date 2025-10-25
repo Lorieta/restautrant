@@ -1,0 +1,25 @@
+<h2>Reservations</h2>
+
+<table border="1" cellpadding="8">
+  <tr>
+    <th>Table</th>
+    <th>Timeslot</th>
+    <th>People</th>
+    <th>Actions</th>
+  </tr>
+
+  <% @reservations.each do |r| %>
+    <tr>
+      <td><%= r.table.name %></td>
+      <td><%= "#{r.timeslot.date} - #{r.timeslot.start_time.strftime('%I:%M %p')}" %></td>
+      <td><%= r.num_people %></td>
+      <td>
+        <%= link_to "Show", r %> |
+        <%= link_to "Edit", edit_reservation_path(r) %> |
+        <%= link_to "Delete", r, data: { turbo_method: :delete, confirm: "Are you sure?" } %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+<%= link_to "New Reservation", new_reservation_path %>

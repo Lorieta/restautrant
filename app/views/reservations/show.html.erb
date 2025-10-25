@@ -1,0 +1,49 @@
+<h1>Reservation details</h1>
+
+<div class="reservation-details">
+  <p>
+    <strong>Guest:</strong>
+    <% if (u = @reservation.user) %>
+      <br>
+      <strong>Name:</strong>
+      <%= u.name.presence || 'N/A' %>
+      <br>
+      <strong>Email:</strong>
+      <%= u.email.presence || 'N/A' %>
+      <br>
+      <strong>Phone:</strong>
+      <%= u.phone.presence || 'N/A' %>
+      <br>
+    <% else %>
+      N/A
+    <% end %>
+  </p>
+
+  <p>
+    <strong>Table:</strong>
+    <%= @reservation.table&.name || 'Unassigned' %>
+    <% if @reservation.table&.seats %>
+      (Seats: <%= @reservation.table.seats %>)
+    <% end %>
+  </p>
+
+  <p>
+    <strong>Timeslot:</strong>
+    <% if @reservation.timeslot %>
+      <%= @reservation.timeslot.date.strftime('%B %-d, %Y') %>
+      from <%= @reservation.timeslot.start_time.strftime('%-I:%M %p') %>
+      to <%= @reservation.timeslot.end_time.strftime('%-I:%M %p') %>
+    <% else %>
+      N/A
+    <% end %>
+  </p>
+
+  <p>
+    <strong>Number of people:</strong>
+    <%= @reservation.num_people %>
+  </p>
+
+
+<div class="mt-3">
+  <%= link_to 'Back to reservations', reservations_path, class: 'btn btn-secondary' %>
+</div>

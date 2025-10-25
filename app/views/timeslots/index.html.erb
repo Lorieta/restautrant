@@ -1,0 +1,23 @@
+<h2>Timeslots</h2>
+
+<table border="1">
+  <tr>
+    <th>Date</th>
+    <th>Start</th>
+    <th>End</th>
+    <th>Actions</th>
+  </tr>
+  <% @timeslots.each do |t| %>
+    <tr>
+      <td><%= t.date %></td>
+      <td><%= t.start_time.strftime("%I:%M %p") %></td>
+      <td><%= t.end_time.strftime("%I:%M %p") %></td>
+      <td>
+        <%= link_to "Edit", edit_timeslot_path(t) %> |
+        <%= button_to "Delete", timeslot_path(t), method: :delete, data: { confirm: "Are you sure?" } %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+<%= link_to "Add Timeslot", new_timeslot_path %>

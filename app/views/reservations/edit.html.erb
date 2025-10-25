@@ -1,0 +1,24 @@
+<h2>Edit Reservation</h2>
+
+<%= render "shared/error_messages", object: @reservation %>
+
+<%= form_with model: @reservation, local: true do |f| %>
+  <p>
+    <strong>Table:</strong><br>
+    <%= f.collection_select :table_id, @tables, :id, :name %>
+  </p>
+
+  <p>
+    <strong>Timeslot:</strong><br>
+    <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')}" } %>
+  </p>
+
+  <p>
+    <strong>Number of People:</strong><br>
+    <%= f.number_field :num_people, min: 1 %>
+  </p>
+
+  <p><%= f.submit "Update Reservation" %></p>
+<% end %>
+
+<%= link_to "Back", reservations_path %>

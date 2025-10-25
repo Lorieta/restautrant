@@ -1,0 +1,25 @@
+<h2>Tables</h2>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Seats</th>
+        <th>Actions</th>
+    </tr>
+    <% @tables.each do |t| %>
+        <tr>
+            <td>
+                <%= t.name %>
+            </td>
+            <td>
+                <%= t.seats %>
+            </td>
+            <td>
+                <%= link_to "Edit" , edit_table_path(t) %> |
+                    <%= button_to "Delete" , table_path(t), method: :delete, data: { confirm: "Are you sure?" } %>
+            </td>
+        </tr>
+        <% end %>
+</table>
+
+<%= link_to "Add New Table" , new_table_path %>

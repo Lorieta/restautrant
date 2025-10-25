@@ -1,0 +1,33 @@
+<h2>Edit Timeslot</h2>
+
+<% if @timeslot.errors.any? %>
+  <div id="error_explanation" style="color: red; margin-bottom: 1em;">
+    <h4><%= pluralize(@timeslot.errors.count, "error") %> prevented this timeslot from being saved:</h4>
+    <ul>
+      <% @timeslot.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @timeslot, local: true do |f| %>
+  <p>
+    <strong>Date:</strong><br>
+    <%= f.date_field :date %>
+  </p>
+
+  <p>
+    <strong>Start Time:</strong><br>
+    <%= f.time_field :start_time %>
+  </p>
+
+  <p>
+    <strong>End Time:</strong><br>
+    <%= f.time_field :end_time %>
+  </p>
+
+  <p><%= f.submit "Update Timeslot" %></p>
+<% end %>
+
+<%= link_to "Back", timeslots_path %>

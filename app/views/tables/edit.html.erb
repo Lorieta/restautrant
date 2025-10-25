@@ -1,0 +1,28 @@
+<h2>Edit Table</h2>
+
+<% if @table.errors.any? %>
+  <div id="error_explanation" style="color: red; margin-bottom: 1em;">
+    <h4><%= pluralize(@table.errors.count, "error") %> prevented this table from being saved:</h4>
+    <ul>
+      <% @table.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @table, local: true do |f| %>
+  <p>
+    <strong>Name:</strong><br>
+    <%= f.text_field :name, placeholder: "e.g. Table 1 or VIP Corner" %>
+  </p>
+
+  <p>
+    <strong>Seats:</strong><br>
+    <%= f.number_field :seats, min: 1, placeholder: "Number of seats" %>
+  </p>
+
+  <p><%= f.submit "Update Table" %></p>
+<% end %>
+
+<%= link_to "Back", tables_path %>

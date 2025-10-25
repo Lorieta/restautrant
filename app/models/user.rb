@@ -1,6 +1,9 @@
 class User < ApplicationRecord
   has_secure_password
 
+  # Associations
+  has_many :reservations, dependent: :destroy
+
   # Use explicit positional first argument for enum name to avoid Ruby keyword-only
   # argument parsing issues (ensure the required `name` positional arg is provided).
   enum :role, { user: 0, admin: 1 }

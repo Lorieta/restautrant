@@ -1,0 +1,20 @@
+<h2>New Table</h2>
+
+<% if @table && @table.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@table.errors.count, "error") %> prohibited this table from being saved:</h2>
+    <ul>
+      <% @table.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @table, local: true do |f| %>
+  <p>Name: <%= f.text_field :name %></p>
+  <p>Seats: <%= f.number_field :seats %></p>
+  <%= f.submit "Create Table" %>
+<% end %>
+
+<%= link_to "Back", tables_path %>

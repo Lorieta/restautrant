@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get "timeslots/index"
+  get "timeslots/new"
+  get "timeslots/edit"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -11,6 +14,10 @@ Rails.application.routes.draw do
 
   # Root should point to UsersController#home (plural controller name)
   resources :users
+  resources :reservations
+  resources :tables
+  resources :timeslots
+
   root "users#home"
   get    "/login",  to: "sessions#new"
   get    "/signup", to: "users#new",     as: :signup
