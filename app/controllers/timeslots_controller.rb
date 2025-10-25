@@ -1,4 +1,5 @@
 class TimeslotsController < ApplicationController
+  include ActionView::RecordIdentifier
   before_action :require_login
   before_action :set_timeslot, only: [ :edit, :update, :destroy ]
 
@@ -39,8 +40,13 @@ class TimeslotsController < ApplicationController
   end
 
   def destroy
+    timeslot_dom_id = dom_id(@timeslot)
     @timeslot.destroy
-    redirect_to timeslots_path, notice: "Timeslot deleted."
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(timeslot_dom_id) }
+      format.html { redirect_back fallback_location: timeslots_path, notice: "Timeslot deleted." }
+    end
   end
 
   private

@@ -90,15 +90,67 @@ export default class extends Controller {
 
         trigger.dataset.confirmModalBypass = "true"
 
-        if ((trigger.tagName === "BUTTON" || trigger.tagName === "INPUT") && trigger.type === "submit" && trigger.form) {
-            trigger.form.requestSubmit(trigger)
-        } else if ((trigger.tagName === "BUTTON" || trigger.tagName === "INPUT") && trigger.form) {
+        if ((trigger.tagName === "BUTTON" || trigger.tagName === "INPUT") && trigger.form) {
             trigger.form.requestSubmit(trigger)
         } else if (trigger.tagName === "FORM") {
             trigger.requestSubmit()
+        } else if (trigger.tagName === "A") {
+            const method = trigger.dataset.turboMethod || trigger.dataset.method
+            if (method && method.toLowerCase() !== "get") {
+                this.submitLinkWithMethod(trigger, method)
+            } else {
+                window.location.href = trigger.href
+            }
         } else {
             trigger.click()
         }
+
+        delete trigger.dataset.confirmModalBypass
+    }
+
+    submitLinkWithMethod(trigger, method) {
+        const form = document.createElement("form")
+        form.method = "post"
+        form.action = trigger.href
+        form.style.display = "none"
+
+        const target = trigger.getAttribute("target")
+        if (target) form.setAttribute("target", target)
+
+        const turboFrame = trigger.dataset.turboFrame
+        if (turboFrame) form.setAttribute("data-turbo-frame", turboFrame)
+
+        const turboPreference = trigger.dataset.turbo
+        if (typeof turboPreference !== "undefined") {
+            form.dataset.turbo = turboPreference
+        }
+
+        const normalizedMethod = method.toUpperCase()
+        if (normalizedMethod !== "POST") {
+            const methodInput = document.createElement("input")
+            methodInput.type = "hidden"
+            methodInput.name = "_method"
+            methodInput.value = normalizedMethod
+            form.appendChild(methodInput)
+        }
+
+        const csrfToken = document.querySelector("meta[name='csrf-token']")?.getAttribute("content")
+        const csrfParam = document.querySelector("meta[name='csrf-param']")?.getAttribute("content")
+
+        if (csrfParam && csrfToken) {
+            const csrfInput = document.createElement("input")
+            csrfInput.type = "hidden"
+            csrfInput.name = csrfParam
+            csrfInput.value = csrfToken
+            form.appendChild(csrfInput)
+        }
+
+        document.body.appendChild(form)
+        form.requestSubmit()
+        form.addEventListener("turbo:submit-end", () => form.remove(), { once: true })
+        form.addEventListener("submit", () => {
+            if (!window.Turbo) form.remove()
+        }, { once: true })
     }
 
     cancel(event) {

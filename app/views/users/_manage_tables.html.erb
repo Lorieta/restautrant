@@ -21,7 +21,7 @@
         </thead>
         <tbody>
           <% tables.order(:id).each do |t| %>
-            <tr>
+            <tr id="<%= dom_id(t) %>">
               <td><%= t.id %></td>
               <td><%= t.name %></td>
               <td><%= t.seats %></td>

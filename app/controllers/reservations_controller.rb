@@ -1,4 +1,5 @@
 class ReservationsController < ApplicationController
+  include ActionView::RecordIdentifier
   before_action :require_login
   before_action :set_reservation, only: [ :show, :edit, :update, :destroy ]
 
@@ -59,8 +60,13 @@ class ReservationsController < ApplicationController
       end
     end
 
+    reservation_dom_id = dom_id(@reservation)
     @reservation.destroy
-    redirect_to reservations_path, notice: "Reservation canceled.", status: :see_other
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(reservation_dom_id) }
+      format.html { redirect_back fallback_location: reservations_path, notice: "Reservation canceled.", status: :see_other }
+    end
   end
 
   private

@@ -15,11 +15,20 @@
         <% timeslots = @timeslots_by_date[date] || [] %>
         <% if timeslots.any? %>
           <% timeslots.each do |t| %>
-            <div class="timeslot">
+            <div class="timeslot" id="<%= dom_id(t) %>">
               <strong><%= t.start_time.strftime("%I:%M %p") %> - <%= t.end_time.strftime("%I:%M %p") %></strong>
               <div class="actions">
                 <%= link_to "Edit", edit_timeslot_path(t), class: 'btn btn-sm' %> |
-                <%= button_to "Delete", timeslot_path(t), method: :delete, data: { confirm: "Are you sure?" }, class: 'btn btn-sm' %>
+                <%= link_to "Delete", timeslot_path(t),
+                            class: 'btn btn-sm btn-link text-danger p-0',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              turbo_method: :delete,
+                              confirm_modal_title: 'Delete Timeslot',
+                              confirm_modal_message: "Delete timeslot on #{t.date} at #{t.start_time&.strftime('%I:%M %p')}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
               </div>
             </div>
           <% end %>
@@ -36,11 +45,20 @@
         <% timeslots = @timeslots_by_date[date] || [] %>
         <% if timeslots.any? %>
           <% timeslots.each do |t| %>
-            <div class="timeslot">
+            <div class="timeslot" id="<%= dom_id(t) %>">
               <strong><%= t.start_time.strftime("%I:%M %p") %></strong>
               <div class="actions">
                 <%= link_to "Edit", edit_timeslot_path(t), class: 'btn btn-sm' %> |
-                <%= button_to "Delete", timeslot_path(t), method: :delete, data: { confirm: "Are you sure?" }, class: 'btn btn-sm' %>
+                <%= link_to "Delete", timeslot_path(t),
+                            class: 'btn btn-sm btn-link text-danger p-0',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              turbo_method: :delete,
+                              confirm_modal_title: 'Delete Timeslot',
+                              confirm_modal_message: "Delete timeslot on #{t.date} at #{t.start_time&.strftime('%I:%M %p')}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
               </div>
             </div>
           <% end %>
@@ -55,11 +73,20 @@
         <% timeslots = @timeslots_by_date[date] || [] %>
         <% if timeslots.any? %>
           <% timeslots.each do |t| %>
-            <div class="timeslot">
+            <div class="timeslot" id="<%= dom_id(t) %>">
               <strong><%= t.start_time.strftime("%I:%M %p") %></strong>
               <div class="actions">
                 <%= link_to "Edit", edit_timeslot_path(t), class: 'btn btn-sm' %> |
-                <%= button_to "Delete", timeslot_path(t), method: :delete, data: { confirm: "Are you sure?" }, class: 'btn btn-sm' %>
+                <%= link_to "Delete", timeslot_path(t),
+                            class: 'btn btn-sm btn-link text-danger p-0',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              turbo_method: :delete,
+                              confirm_modal_title: 'Delete Timeslot',
+                              confirm_modal_message: "Delete timeslot on #{t.date} at #{t.start_time&.strftime('%I:%M %p')}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
               </div>
             </div>
           <% end %>

@@ -22,7 +22,7 @@
         </thead>
         <tbody>
           <% timeslots.order(:date, :start_time).each do |ts| %>
-            <tr>
+            <tr id="<%= dom_id(ts) %>">
               <td><%= ts.id %></td>
               <td><%= ts.date %></td>
               <td><%= ts.start_time.strftime('%H:%M') rescue '' %></td>

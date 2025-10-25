@@ -7,7 +7,7 @@
         <th>Actions</th>
     </tr>
     <% @tables.each do |t| %>
-        <tr>
+        <tr id="<%= dom_id(t) %>">
             <td>
                 <%= t.name %>
             </td>
@@ -16,7 +16,16 @@
             </td>
             <td>
                 <%= link_to "Edit" , edit_table_path(t) %> |
-                    <%= button_to "Delete" , table_path(t), method: :delete, data: { confirm: "Are you sure?" } %>
+                <%= link_to "Delete", table_path(t),
+                            class: 'btn btn-link p-0 text-danger',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              turbo_method: :delete,
+                              confirm_modal_title: 'Delete Table',
+                              confirm_modal_message: "Delete table #{t.name}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
             </td>
         </tr>
         <% end %>
