@@ -1,0 +1,25 @@
+<h2>Timeslots Calendar - <%= @month.strftime('%B %Y') %></h2>
+
+<%= link_to "Previous", timeslot_calendar_path(month: (@month - 1.month).to_date), class: 'btn btn-secondary' %>
+<%= link_to "Next", timeslot_calendar_path(month: (@month + 1.month).to_date), class: 'btn btn-secondary' %>
+
+<div class="mt-3">
+  <%# Using simple_calendar's month_calendar helper to render the grid %>
+  <%= month_calendar do |date| %>
+    <div class="calendar-day" style="padding: 6px;">
+      <strong><%= date.day %></strong>
+
+      <% slots = @timeslots_by_date[date] || @timeslots_by_date[date.to_date] || [] %>
+      <% slots.each do |ts| %>
+        <div style="margin-top:4px;">
+          <small><%= ts.start_time.strftime('%H:%M') %> - <%= ts.end_time.strftime('%H:%M') %></small>
+          <% if ts.reservations.any? %>
+            <span class="badge bg-danger"><%= ts.reservations.count %></span>
+          <% else %>
+            <%= link_to 'Book', new_reservation_path(timeslot_id: ts.id), class: 'btn btn-sm btn-primary ms-2' %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

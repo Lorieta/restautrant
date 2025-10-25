@@ -1,9 +1,18 @@
 class TimeslotsController < ApplicationController
+  include ActionView::RecordIdentifier
   before_action :require_login
   before_action :set_timeslot, only: [ :edit, :update, :destroy ]
 
   def index
-    @timeslots = Timeslot.order(:date, :start_time)
+    # Determine the calendar start date from params (fallback to today)
+    start_date = params.fetch(:start_date, Date.today).to_date
+
+    # Scope the query to the month view range so the calendar only loads visible events
+    range = start_date.beginning_of_month.beginning_of_week..start_date.end_of_month.end_of_week
+
+    @timeslots = Timeslot.where(date: range).order(:date, :start_time)
+    # Pre-group timeslots by date for reliable rendering in the calendar view
+    @timeslots_by_date = @timeslots.group_by(&:date)
   end
 
   def new
@@ -31,8 +40,13 @@ class TimeslotsController < ApplicationController
   end
 
   def destroy
+    timeslot_dom_id = dom_id(@timeslot)
     @timeslot.destroy
-    redirect_to timeslots_path, notice: "Timeslot deleted."
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(timeslot_dom_id) }
+      format.html { redirect_back fallback_location: timeslots_path, notice: "Timeslot deleted." }
+    end
   end
 
   private

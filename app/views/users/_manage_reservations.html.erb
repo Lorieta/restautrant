@@ -1,0 +1,56 @@
+<div class="admin-manage-section mt-3" id="manage-reservations" data-controller="collapsible" data-collapsible-expanded-value="true">
+  <div class="admin-manage-section-header">
+    <h3>Reservations</h3>
+    <button type="button" class="btn btn-secondary btn-sm" data-action="click->collapsible#toggle" data-collapsible-target="toggle" aria-controls="manage-reservations-content" aria-expanded="true">
+      Hide
+    </button>
+  </div>
+  <div class="admin-manage-section-body" id="manage-reservations-content" data-collapsible-target="content">
+    <div class="mb-2">
+      <%= link_to 'New Reservation', new_reservation_path, class: 'btn btn-sm btn-primary' %>
+    </div>
+    <% if reservations.any? %>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Table</th>
+            <th>Timeslot</th>
+            <th>People</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% reservations.order(created_at: :desc).each do |r| %>
+            <tr id="<%= dom_id(r) %>">
+              <td><%= r.id %></td>
+              <td><%= r.user&.name %></td>
+              <td><%= r.table&.name %></td>
+              <td>
+                <%= r.timeslot&.date %>
+                <%= ' ' + (r.timeslot.start_time.strftime('%H:%M') rescue '') if r.timeslot %>
+              </td>
+              <td><%= r.num_people %></td>
+              <td>
+                <%= link_to 'Edit', edit_reservation_path(r), class: 'btn btn-sm btn-outline-primary' %>
+                <%= link_to 'Delete', reservation_path(r),
+                            method: :delete,
+                            class: 'btn btn-sm btn-outline-danger',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              confirm_modal_title: 'Delete Reservation',
+                              confirm_modal_message: "Delete reservation ##{r.id}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No reservations found.</p>
+    <% end %>
+  </div>
+</div>

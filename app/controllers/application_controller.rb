@@ -7,6 +7,4 @@ class ApplicationController < ActionController::Base
   # Make session helper methods available to controllers (e.g. log_in, log_out)
   include SessionsHelper
 
- def home
-  end
 end

@@ -1,4 +1,5 @@
 class TablesController < ApplicationController
+  include ActionView::RecordIdentifier
   before_action :require_login
   before_action :set_table, only: [ :edit, :update, :destroy ]
 
@@ -31,8 +32,13 @@ class TablesController < ApplicationController
   end
 
   def destroy
+    table_dom_id = dom_id(@table)
     @table.destroy
-    redirect_to tables_path, notice: "Table deleted."
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(table_dom_id) }
+      format.html { redirect_back fallback_location: tables_path, notice: "Table deleted." }
+    end
   end
 
   private

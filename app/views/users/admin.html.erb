@@ -1,0 +1,137 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h1>Admin Dashboard</h1>
+      <p class="lead">Welcome, <%= current_user.name %>!</p>
+    
+      <div class="admin-summary mt-4">
+        <%= render 'admin_card', title: 'Total Users', count: @users.count, collapse_target: 'manage-users', button_text: 'Manage Users' %>
+        <%= render 'admin_card', title: 'Total Reservations', count: @reservations.count, collapse_target: 'manage-reservations', button_text: 'Manage Reservations' %>
+        <%= render 'admin_card', title: 'Total Tables', count: @tables.count, collapse_target: 'manage-tables', button_text: 'Manage Tables' %>
+        <%= render 'admin_card', title: 'Total Timeslots', count: @timeslots.count, collapse_target: 'manage-timeslots', button_text: 'Manage Timeslots' %>
+      </div>
+
+      <div class="admin-reservations mt-4" data-controller="reservation-view" data-reservation-view-list-label-value="List" data-reservation-view-calendar-label-value="Calendar">
+        <div class="admin-reservations-header">
+          <h2>Reservations</h2>
+          <div class="admin-reservations-switch">
+            <span class="admin-reservations-switch-label">View:</span>
+            <button type="button" class="btn btn-secondary btn-sm" data-action="reservation-view#toggle" data-reservation-view-target="toggle" aria-pressed="false" aria-controls="reservation-view-panels">
+              List
+            </button>
+          </div>
+        </div>
+
+        <div id="reservation-view-panels">
+          <div class="admin-calendar" data-reservation-view-target="calendar">
+            <!-- View switcher -->
+            <div class="admin-calendar-switcher">
+              <%= link_to 'Day', admin_dashboard_path(view: 'day'), class: "btn btn-sm #{params[:view] == 'day' ? 'btn-primary' : 'btn-secondary'}" %>
+              <%= link_to 'Week', admin_dashboard_path(view: 'week'), class: "btn btn-sm #{params[:view] == 'week' ? 'btn-primary' : 'btn-secondary'}" %>
+              <%= link_to 'Month', admin_dashboard_path(view: nil), class: "btn btn-sm #{params[:view].blank? || params[:view] == 'month' ? 'btn-primary' : 'btn-secondary'}" %>
+            </div>
+
+            <div class="admin-calendar-wrapper">
+              <% if params[:view] == 'day' %>
+                <%= calendar(number_of_days: 1) do |date| %>
+                  <div class="day">
+                    <div class="date"><%= date.day %></div>
+                    <% reservations = @reservations_by_date[date] || [] %>
+                    <% if reservations.any? %>
+                      <% reservations.each do |res| %>
+                        <div class="reservation-item">
+                          <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
+                          <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
+                        </div>
+                      <% end %>
+                    <% else %>
+                      <div class="text-muted" style="font-size: 0.8rem;">No reservations</div>
+                    <% end %>
+                  </div>
+                <% end %>
+              <% elsif params[:view] == 'week' %>
+                <%= week_calendar(number_of_weeks: 1) do |date| %>
+                  <div class="day">
+                    <div class="date"><%= date.day %></div>
+                    <% reservations = @reservations_by_date[date] || [] %>
+                    <% if reservations.any? %>
+                      <% reservations.each do |res| %>
+                        <div class="reservation-item">
+                          <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
+                          <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
+                        </div>
+                      <% end %>
+                    <% else %>
+                      <div class="text-muted" style="font-size: 0.8rem;">No reservations</div>
+                    <% end %>
+                  </div>
+                <% end %>
+              <% else %>
+                <%= month_calendar do |date| %>
+                  <div class="day">
+                    <div class="date"><%= date.day %></div>
+                    <% reservations = @reservations_by_date[date] || [] %>
+                    <% if reservations.any? %>
+                      <% reservations.each do |res| %>
+                        <div class="reservation-item">
+                          <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
+                          <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
+                        </div>
+                      <% end %>
+                    <% else %>
+                      <div class="text-muted" style="font-size: 0.8rem;">No reservations</div>
+                    <% end %>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="admin-reservations-list" data-reservation-view-target="list" hidden>
+            <% if @reservations.any? %>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Table</th>
+                    <th>Timeslot</th>
+                    <th>People</th>
+                    <th>Created At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @reservations.order(created_at: :desc).limit(10).each do |reservation| %>
+                    <tr>
+                      <td><%= reservation.id %></td>
+                      <td><%= reservation.user.name %></td>
+                      <td><%= reservation.table.name %></td>
+                      <td><%= reservation.timeslot.date %> <%= reservation.timeslot.start_time.strftime('%H:%M') if reservation.timeslot.start_time %></td>
+                      <td><%= reservation.num_people %></td>
+                      <td><%= reservation.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% else %>
+              <p>No reservations yet.</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-manage mt-4" id="manage-sections" data-controller="collapsible" data-collapsible-expanded-value="true">
+        <div class="admin-manage-header">
+          <h2>Manage Resources</h2>
+       
+        </div>
+        <div class="admin-manage-content" id="manage-resources-content" data-collapsible-target="content">
+          <%= render 'manage_users', users: (@users || []) %>
+          <%= render 'manage_reservations', reservations: (@reservations || []) %>
+          <%= render 'manage_tables', tables: (@tables || []) %>
+          <%= render 'manage_timeslots', timeslots: (@timeslots || []) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

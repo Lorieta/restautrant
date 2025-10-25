@@ -2,15 +2,31 @@
 
 <%= render "shared/error_messages", object: @reservation %>
 
+<% if @selected_timeslot %>
+  <% available_tables = available_tables_count(@selected_timeslot) %>
+  <div class="alert alert-info d-flex justify-content-between align-items-center">
+    <span>
+      Selected timeslot:
+      <strong><%= @selected_timeslot.date.strftime('%A, %B %-d, %Y') %></strong>
+      at
+      <strong><%= @selected_timeslot.start_time.strftime('%I:%M %p') %> – <%= @selected_timeslot.end_time.strftime('%I:%M %p') %></strong>
+    </span>
+    <span class="badge <%= available_tables.positive? ? 'bg-success' : 'bg-secondary' %>">
+      <%= pluralize(available_tables, 'table') %> available
+    </span>
+  </div>
+<% end %>
+
 <%= form_with model: @reservation, local: true do |f| %>
   <p>
     <strong>Table:</strong><br>
-    <%= f.collection_select :table_id, @tables, :id, :name, prompt: "Select a Table" %>
+    <%= f.collection_select :table_id, @tables, :id, :name, { prompt: "Select a Table" }, { id: 'reservation_table_id' } %>
   </p>
 
   <p>
     <strong>Timeslot:</strong><br>
-    <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')}" }, prompt: "Select a Timeslot" %>
+    <% prompt_text = @selected_timeslot ? "Change the selected timeslot" : "Select a Timeslot" %>
+    <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')} (#{available_tables_count(t)} available)" }, { prompt: prompt_text, selected: @selected_timeslot&.id }, { id: 'reservation_timeslot_id' } %>
   </p>
 
   <p>
@@ -22,3 +38,57 @@
 <% end %>
 
 <%= link_to "Back", reservations_path %>
+
+<hr>
+<section class="mt-4">
+  <h3>Availability</h3>
+  <p class="text-muted">Browse upcoming dates with hourly timeslots and review the tables still open for each slot.</p>
+
+  <% if @timeslots_by_date.blank? %>
+    <p class="text-muted">No upcoming timeslots are currently available. Please check back later.</p>
+  <% else %>
+    <% @timeslots_by_date.sort.each do |date, slots| %>
+      <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <strong><%= date.strftime('%A, %B %-d, %Y') %></strong>
+          <span class="badge bg-secondary"><%= pluralize(slots.size, 'slot') %></span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm mb-0">
+            <thead>
+              <tr>
+                <th scope="col">Time</th>
+                <th scope="col" class="text-center">Available Tables</th>
+                <th scope="col" class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% slots.each do |slot| %>
+                <% available_tables = available_tables_count(slot) %>
+                <tr class="<%= 'table-active' if @selected_timeslot&.id == slot.id %>">
+                  <td>
+                    <strong><%= slot.start_time.strftime('%I:%M %p') %></strong>
+                    &ndash;
+                    <%= slot.end_time.strftime('%I:%M %p') %>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge <%= available_tables.positive? ? 'bg-success' : 'bg-danger' %>">
+                      <%= pluralize(available_tables, 'table') %>
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <% if available_tables.positive? %>
+                      <%= link_to 'Select slot', new_reservation_path(timeslot_id: slot.id), class: 'btn btn-sm btn-outline-primary' %>
+                    <% else %>
+                      <span class="text-muted">Fully booked</span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</section>

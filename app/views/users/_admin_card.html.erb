@@ -1,0 +1,15 @@
+<div class="admin-summary-card">
+  <p class="admin-summary-card-title"><%= title %></p>
+  <p class="admin-summary-card-count"><%= count %></p>
+  <% action_target = if defined?(path) && path.present?
+                      path
+                    elsif defined?(collapse_target) && collapse_target.present?
+                      "##{collapse_target}"
+                    end %>
+  <% action_label = (defined?(button_text) && button_text.present?) ? button_text : 'Manage' %>
+  <% if action_target.present? %>
+    <%= link_to action_label, action_target, class: 'btn btn-secondary admin-summary-card-action' %>
+  <% elsif block_given? %>
+    <%= yield %>
+  <% end %>
+</div>

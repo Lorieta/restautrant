@@ -1,0 +1,51 @@
+<div class="admin-manage-section mt-3" id="manage-timeslots" data-controller="collapsible" data-collapsible-expanded-value="true">
+  <div class="admin-manage-section-header">
+    <h3>Timeslots</h3>
+    <button type="button" class="btn btn-secondary btn-sm" data-action="click->collapsible#toggle" data-collapsible-target="toggle" aria-controls="manage-timeslots-content" aria-expanded="true">
+      Hide
+    </button>
+  </div>
+  <div class="admin-manage-section-body" id="manage-timeslots-content" data-collapsible-target="content">
+    <div class="mb-2">
+      <%= link_to 'New Timeslot', new_timeslot_path, class: 'btn btn-sm btn-primary' %>
+    </div>
+    <% if timeslots.any? %>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% timeslots.order(:date, :start_time).each do |ts| %>
+            <tr id="<%= dom_id(ts) %>">
+              <td><%= ts.id %></td>
+              <td><%= ts.date %></td>
+              <td><%= ts.start_time.strftime('%H:%M') rescue '' %></td>
+              <td><%= ts.end_time.strftime('%H:%M') rescue '' %></td>
+              <td>
+                <%= link_to 'Edit', edit_timeslot_path(ts), class: 'btn btn-sm btn-outline-primary' %>
+                <%= link_to 'Delete', timeslot_path(ts),
+                            method: :delete,
+                            class: 'btn btn-sm btn-outline-danger',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              confirm_modal_title: 'Delete Timeslot',
+                              confirm_modal_message: "Delete timeslot on #{ts.date}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No timeslots found.</p>
+    <% end %>
+  </div>
+</div>

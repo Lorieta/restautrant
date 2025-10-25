@@ -1,0 +1,49 @@
+<div class="admin-manage-section mt-3" id="manage-tables" data-controller="collapsible" data-collapsible-expanded-value="true">
+  <div class="admin-manage-section-header">
+    <h3>Tables</h3>
+    <button type="button" class="btn btn-secondary btn-sm" data-action="click->collapsible#toggle" data-collapsible-target="toggle" aria-controls="manage-tables-content" aria-expanded="true">
+      Hide
+    </button>
+  </div>
+  <div class="admin-manage-section-body" id="manage-tables-content" data-collapsible-target="content">
+    <div class="mb-2">
+      <%= link_to 'New Table', new_table_path, class: 'btn btn-sm btn-primary' %>
+    </div>
+    <% if tables.any? %>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Seats</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% tables.order(:id).each do |t| %>
+            <tr id="<%= dom_id(t) %>">
+              <td><%= t.id %></td>
+              <td><%= t.name %></td>
+              <td><%= t.seats %></td>
+              <td>
+                <%= link_to 'Edit', edit_table_path(t), class: 'btn btn-sm btn-outline-primary' %>
+                <%= link_to 'Delete', table_path(t),
+                            method: :delete,
+                            class: 'btn btn-sm btn-outline-danger',
+                            data: {
+                              action: 'confirm-modal#ask',
+                              confirm_modal_title: 'Delete Table',
+                              confirm_modal_message: "Delete table #{t.name}?",
+                              confirm_modal_confirm_text: 'Delete',
+                              confirm_modal_confirm_class: 'btn btn-danger'
+                            } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No tables found.</p>
+    <% end %>
+  </div>
+</div>

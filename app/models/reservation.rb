@@ -6,6 +6,7 @@ class Reservation < ApplicationRecord
   validates :num_people, presence: true, numericality: { greater_than: 0 }
   validate :table_capacity_check
   validate :two_hours_before_rule
+  validate :table_availability
 
   private
 
@@ -32,6 +33,17 @@ class Reservation < ApplicationRecord
 
     if start_of_reservation < 2.hours.from_now
       errors.add(:timeslot, "must be booked at least 2 hours in advance")
+    end
+  end
+
+  def table_availability
+    return unless table && timeslot
+
+    # If another reservation exists for the same table and timeslot, it's unavailable
+    conflict = Reservation.where(table_id: table.id, timeslot_id: timeslot.id)
+    conflict = conflict.where.not(id: id) if persisted?
+    if conflict.exists?
+      errors.add(:table, "is already booked for that timeslot")
     end
   end
 end
