@@ -1,10 +1,151 @@
 /*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
+ * Application stylesheet — minimal, modern styling for the reservation app.
+ * Keep this file simple (Propshaft serves static assets). Feel free to split into
+ * smaller files later if needed.
  */
+
+/* Base layout */
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: #f8f9fa;
+    color: #212529;
+    margin: 0;
+    padding: 1rem;
+    line-height: 1.4;
+}
+
+header {
+    background: #fff;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 1rem;
+}
+
+/* Simple buttons */
+.btn {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    background: #0d6efd;
+    font-size: 0.95rem;
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 0.85rem;
+}
+
+.btn-secondary {
+    background: #6c757d;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+/* Tables */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+.table th,
+.table td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Simple Calendar styles (scope to simple-calendar) */
+.simple-calendar {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #e9ecef;
+}
+
+.simple-calendar th {
+    background: #f1f5f9;
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.simple-calendar td {
+    vertical-align: top;
+    padding: 8px;
+    min-height: 110px;
+    border-right: 1px solid #f1f5f9;
+}
+
+.simple-calendar .date {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.day {
+    display: block;
+}
+
+.timeslot,
+.reservation-item {
+    background: #f8fafc;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.timeslot .actions {
+    margin-left: 8px;
+}
+
+.reservation-item a {
+    color: #0d6efd;
+    text-decoration: none;
+    margin-left: 8px;
+}
+
+.today {
+    background: #eef2ff !important;
+}
+
+.has-events {
+    box-shadow: inset 0 0 0 1px rgba(13, 110, 253, 0.06);
+}
+
+/* Small responsiveness */
+@media (max-width: 640px) {
+    .simple-calendar td {
+        min-height: 140px;
+    }
+
+    .timeslot {
+        font-size: 0.9rem;
+    }
+}
+
+/* Utility spacing */
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+/* Forms */
+form p {
+    margin-bottom: 0.75rem;
+}

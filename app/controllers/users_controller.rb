@@ -58,11 +58,15 @@ class UsersController < ApplicationController
   end
 
   def admin
-    # Add any admin dashboard logic here
+    # Admin dashboard overview
     @users = User.all
-    @reservations = Reservation.all
+    # Scope reservations to the calendar-visible range for performance
+    start_date = params.fetch(:start_date, Date.today).to_date
+    range = start_date.beginning_of_month.beginning_of_week..start_date.end_of_month.end_of_week
+    @reservations = Reservation.joins(:timeslot).where(timeslots: { date: range }).includes(:user, :table, :timeslot)
+    @reservations_by_date = @reservations.group_by { |r| r.timeslot&.date }
     @tables = Table.all
-    @timeslots = Timeslot.all
+    @timeslots = Timeslot.where(date: range).order(:date, :start_time)
   end
 
   private

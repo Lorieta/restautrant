@@ -77,6 +77,26 @@
           <p>No reservations yet.</p>
         <% end %>
       </div>
+      
+      <div class="mt-4">
+        <h2>Reservation Calendar</h2>
+        <%= month_calendar do |date| %>
+          <div class="day">
+            <div class="date"><%= date.day %></div>
+            <% reservations = @reservations_by_date[date] || [] %>
+            <% if reservations.any? %>
+              <% reservations.each do |res| %>
+                <div class="reservation-item">
+                  <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
+                  <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
+                </div>
+              <% end %>
+            <% else %>
+              <div class="text-muted">No reservations</div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>

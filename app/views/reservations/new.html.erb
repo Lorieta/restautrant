@@ -10,7 +10,7 @@
 
   <p>
     <strong>Timeslot:</strong><br>
-    <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')}" }, prompt: "Select a Timeslot" %>
+    <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')} (#{available_tables_count(t)} available)" }, prompt: "Select a Timeslot" %>
   </p>
 
   <p>
@@ -22,3 +22,29 @@
 <% end %>
 
 <%= link_to "Back", reservations_path %>
+
+<hr>
+<h3>Quick availability</h3>
+<p>Click "Book" to pre-select a timeslot and show only available tables for that slot.</p>
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Available Tables</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @timeslots.each do |ts| %>
+      <tr>
+        <td><%= ts.date %></td>
+        <td><%= ts.start_time.strftime('%I:%M %p') %></td>
+        <td><%= ts.end_time.strftime('%I:%M %p') %></td>
+        <td><%= available_tables_count(ts) %></td>
+        <td><%= link_to 'Book', new_reservation_path(timeslot_id: ts.id), class: 'btn btn-sm btn-primary' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

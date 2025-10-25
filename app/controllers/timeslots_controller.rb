@@ -3,7 +3,15 @@ class TimeslotsController < ApplicationController
   before_action :set_timeslot, only: [ :edit, :update, :destroy ]
 
   def index
-    @timeslots = Timeslot.order(:date, :start_time)
+    # Determine the calendar start date from params (fallback to today)
+    start_date = params.fetch(:start_date, Date.today).to_date
+
+    # Scope the query to the month view range so the calendar only loads visible events
+    range = start_date.beginning_of_month.beginning_of_week..start_date.end_of_month.end_of_week
+
+    @timeslots = Timeslot.where(date: range).order(:date, :start_time)
+    # Pre-group timeslots by date for reliable rendering in the calendar view
+    @timeslots_by_date = @timeslots.group_by(&:date)
   end
 
   def new

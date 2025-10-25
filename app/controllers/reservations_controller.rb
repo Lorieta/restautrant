@@ -11,8 +11,16 @@ class ReservationsController < ApplicationController
 
   def new
     @reservation = Reservation.new
-    @tables = Table.all
-    @timeslots = Timeslot.all
+    @timeslots = Timeslot.order(:date, :start_time)
+
+    # If a timeslot is pre-selected (e.g., user clicked a slot), show only available tables
+    if params[:timeslot_id].present?
+      @selected_timeslot = Timeslot.find_by(id: params[:timeslot_id])
+      reserved_table_ids = Reservation.where(timeslot_id: @selected_timeslot)&.pluck(:table_id) || []
+      @tables = Table.where.not(id: reserved_table_ids)
+    else
+      @tables = Table.all
+    end
   end
 
   def create
@@ -21,8 +29,14 @@ class ReservationsController < ApplicationController
     if @reservation.save
       redirect_to @reservation, notice: "Reservation created successfully!"
     else
-      @tables = Table.all
-      @timeslots = Timeslot.all
+      # Re-populate helper objects when re-rendering the form
+      @timeslots = Timeslot.order(:date, :start_time)
+      if @reservation.timeslot
+        reserved_table_ids = Reservation.where(timeslot_id: @reservation.timeslot)&.pluck(:table_id) || []
+        @tables = Table.where.not(id: reserved_table_ids)
+      else
+        @tables = Table.all
+      end
       render :new
     end
   end
@@ -43,6 +57,23 @@ class ReservationsController < ApplicationController
   end
 
   def destroy
+    # Prevent cancellation within 2 hours of the reservation start
+    if @reservation.timeslot && @reservation.timeslot.date && @reservation.timeslot.start_time
+      start_of_reservation = Time.zone.local(
+        @reservation.timeslot.date.year,
+        @reservation.timeslot.date.month,
+        @reservation.timeslot.date.day,
+        @reservation.timeslot.start_time.hour,
+        @reservation.timeslot.start_time.min,
+        @reservation.timeslot.start_time.sec
+      )
+
+      if start_of_reservation < 2.hours.from_now
+        redirect_to reservations_path, alert: "Cannot cancel reservations less than 2 hours before the start time."
+        return
+      end
+    end
+
     @reservation.destroy
     redirect_to reservations_path, notice: "Reservation canceled."
   end
