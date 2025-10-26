@@ -1,10 +1,41 @@
 <h2>Sign Up</h2>
 <% user = @user || User.new %>
+<%= render 'shared/error_messages', object: user %>
 <%= form_with model: user, local: true do |f| %>
-  <p>Name: <%= f.text_field :name %></p>
-  <p>Email: <%= f.email_field :email %></p>
-  <p>Phone: <%= f.text_field :phone %></p>
-  <p>Password: <%= f.password_field :password %></p>
-  <p>Confirm Password: <%= f.password_field :password_confirmation %></p>
+  <p>
+    Name: <%= f.text_field :name, class: "form-control #{'is-invalid' if user.errors[:name].any?}" %>
+    <% if user.errors[:name].any? %>
+      <div class="invalid-feedback"><%= user.errors[:name].join(', ') %></div>
+    <% end %>
+  </p>
+
+  <p>
+    Email: <%= f.email_field :email, class: "form-control #{'is-invalid' if user.errors[:email].any?}" %>
+    <% if user.errors[:email].any? %>
+      <div class="invalid-feedback"><%= user.errors[:email].join(', ') %></div>
+    <% end %>
+  </p>
+
+  <p>
+    Phone: <%= f.text_field :phone, class: "form-control #{'is-invalid' if user.errors[:phone].any?}" %>
+    <% if user.errors[:phone].any? %>
+      <div class="invalid-feedback"><%= user.errors[:phone].join(', ') %></div>
+    <% end %>
+  </p>
+
+  <p>
+    Password: <%= f.password_field :password, class: "form-control #{'is-invalid' if user.errors[:password].any?}" %>
+    <% if user.errors[:password].any? %>
+      <div class="invalid-feedback"><%= user.errors[:password].join(', ') %></div>
+    <% end %>
+  </p>
+
+  <p>
+    Confirm Password: <%= f.password_field :password_confirmation, class: "form-control #{'is-invalid' if user.errors[:password_confirmation].any?}" %>
+    <% if user.errors[:password_confirmation].any? %>
+      <div class="invalid-feedback"><%= user.errors[:password_confirmation].join(', ') %></div>
+    <% end %>
+  </p>
+
   <%= f.submit "Register" %>
 <% end %>

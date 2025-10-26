@@ -7,6 +7,9 @@
   </div>
 
   <div class="admin-manage-section-body" id="manage-inventory-content" data-collapsible-target="content">
+    <%# Render validation errors for table or timeslot if present so admins see failures in this panel %>
+    <%= render 'shared/error_messages', object: @table if defined?(@table) && @table.present? %>
+    <%= render 'shared/error_messages', object: @timeslot if defined?(@timeslot) && @timeslot.present? %>
     <% if @tables.present? %>
       <div class="table-responsive">
         <table class="table table-sm align-middle">
@@ -54,7 +57,12 @@
                 <td>
                   <%= link_to 'Add Timeslot', new_timeslot_path(table_id: t.id), class: 'btn btn-sm btn-outline-success me-2' %>
                   <%= link_to 'Edit Table', edit_table_path(t), class: 'btn btn-sm btn-outline-primary' %>
-                  <%= link_to 'Delete Table', table_path(t), method: :delete, class: 'btn btn-sm btn-outline-danger', data: { action: 'confirm-modal#ask', confirm_modal_title: 'Delete Table', confirm_modal_message: "Delete table ##{t.id} (Number of tables: #{t.quantity}, Cap: #{t.capacity})?", confirm_modal_confirm_text: 'Delete', confirm_modal_confirm_class: 'btn btn-danger' } %>
+                  <% if t.reservations.exists? %>
+                    <button type="button" class="btn btn-sm btn-outline-danger disabled" aria-disabled="true" title="Cannot delete: this table has reservations">Delete Table</button>
+                    <div class="small text-muted mt-1">Cannot delete while reservations reference this table.</div>
+                  <% else %>
+                    <%= link_to 'Delete Table', table_path(t), method: :delete, class: 'btn btn-sm btn-outline-danger', data: { action: 'confirm-modal#ask', confirm_modal_title: 'Delete Table', confirm_modal_message: "Delete table ##{t.id} (Number of tables: #{t.quantity}, Cap: #{t.capacity})?", confirm_modal_confirm_text: 'Delete', confirm_modal_confirm_class: 'btn btn-danger' } %>
+                  <% end %>
                 </td>
               </tr>
             <% end %>

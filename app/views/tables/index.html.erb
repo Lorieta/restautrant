@@ -1,5 +1,19 @@
 <h2>Tables</h2>
 
+<!-- Container for inline table-related errors (populated by Turbo responses) -->
+<div id="table_errors">
+    <%# Render model errors inline if a @table object with errors is present
+            (this covers the case where the controller supplies @table on redirect
+             or when rendering the index after a failed operation). Otherwise show
+            any flash alert as a fallback. Turbo responses will replace this node
+            with the shared error partial when needed. %>
+    <% if defined?(@table) && @table && @table.respond_to?(:errors) && @table.errors.any? %>
+        <%= render 'shared/error_messages', object: @table %>
+    <% elsif flash[:alert].present? %>
+        <div class="alert alert-danger" role="alert"><%= flash[:alert] %></div>
+    <% end %>
+</div>
+
 <table border="1">
     <tr>
     <th>Quantity</th>

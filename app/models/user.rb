@@ -9,14 +9,19 @@ class User < ApplicationRecord
   enum :role, { user: 0, admin: 1 }
   # Basic RFC-like email regex (sufficient for most apps) and validations
   EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i.freeze
+  # Disallow raw HTML tags in free-text fields
+  NO_HTML_REGEX = /<[^>]*>/.freeze
+  # Strong password: at least 8 chars, one lower, one upper, one digit and one special char
+  PASSWORD_FORMAT = /\A(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).*\z/.freeze
   # Normalize email to lowercase and validate uniqueness case-insensitively
   before_validation :downcase_email
 
-  validates :name,  presence: true, length: { minimum: 2 }
+  validates :name, presence: true, length: { minimum: 2 }, format: { without: NO_HTML_REGEX, message: 'must not contain HTML' }
+  validates :phone, format: { without: NO_HTML_REGEX, message: 'must not contain HTML' }, allow_blank: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 255 },
                     format: { with: EMAIL_REGEX }
-  validates :password, presence: true, length: { minimum: 6 }, on: :create
-  validates :password, length: { minimum: 6 }, allow_blank: true, on: :update
+  validates :password, presence: true, length: { minimum: 8 }, format: { with: PASSWORD_FORMAT, message: 'must include uppercase, lowercase, digit and special character' }, on: :create
+  validates :password, length: { minimum: 8 }, format: { with: PASSWORD_FORMAT, message: 'must include uppercase, lowercase, digit and special character' }, allow_blank: true, on: :update
 
   # Ensure we never remove the last admin by role change or deletion
   validate :cannot_downgrade_last_admin, if: :will_save_change_to_role?

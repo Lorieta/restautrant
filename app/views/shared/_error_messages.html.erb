@@ -1,17 +1,22 @@
 <% model = local_assigns[:object] || local_assigns[:resource] || local_assigns[:model] %>
 
 <% if model && model.respond_to?(:errors) && model.errors.any? %>
-	<div id="error_explanation" class="alert alert-danger" role="alert" aria-live="polite">
-		<h4 class="alert-heading">
-			<%= pluralize(model.errors.count, 'error') %> prohibited this
-			<%= model.model_name.human.downcase %> from being saved:
-		</h4>
+	<div id="error_explanation" role="alert" aria-live="polite" class="error-card mb-3" aria-atomic="true">
+		<div class="error-card-header">
+			<span class="error-card-icon" aria-hidden="true">&#9888;</span>
+			<div class="error-card-title">
+				<strong><%= pluralize(model.errors.count, 'error') %> prevented this <%= model.model_name.human.downcase %> from being saved</strong>
+			</div>
+		</div>
 
-		<ul class="mb-0">
-			<% model.errors.full_messages.each do |msg| %>
-				<li><%= msg %></li>
-			<% end %>
-		</ul>
+		<div class="error-card-body">
+			<p class="error-card-subtle">Please fix the following <%= 'message'.pluralize(model.errors.count) %> and try again:</p>
+			<ul class="error-card-list">
+				<% model.errors.full_messages.each do |msg| %>
+					<li class="error-card-item"><%= msg %></li>
+				<% end %>
+			</ul>
+		</div>
 	</div>
 <% end %>
 

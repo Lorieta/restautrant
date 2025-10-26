@@ -31,7 +31,9 @@ class UsersController < ApplicationController
       log_in @user
       redirect_to root_path, notice: "Welcome, #{@user.name}!"
     else
-      render :new
+      # Surface validation feedback and return 422 so Turbo/form submissions treat this as a validation error
+      flash.now[:alert] = @user.errors.full_messages.to_sentence if @user.errors.any?
+      render :new, status: :unprocessable_entity
     end
   end
 

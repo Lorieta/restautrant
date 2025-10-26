@@ -36,11 +36,20 @@ class TablesController < ApplicationController
 
   def destroy
     table_dom_id = dom_id(@table)
-    @table.destroy
 
-    respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(table_dom_id) }
-      format.html { redirect_back fallback_location: tables_path, notice: "Table deleted." }
+    if @table.destroy
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.remove(table_dom_id) }
+        format.html { redirect_back fallback_location: tables_path, notice: "Table deleted." }
+      end
+    else
+      message = @table.errors.full_messages.to_sentence.presence || "Cannot delete table while reservations exist."
+      respond_to do |format|
+        # For Turbo requests render the shared error partial into a designated
+        # container on the index page so the error messages appear inline.
+        format.turbo_stream { render turbo_stream: turbo_stream.replace('table_errors', partial: 'shared/error_messages', locals: { object: @table }), status: :unprocessable_entity }
+        format.html { redirect_back fallback_location: tables_path, alert: message }
+      end
     end
   end
 
