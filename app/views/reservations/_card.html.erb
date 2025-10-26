@@ -1,0 +1,36 @@
+<div id="<%= dom_id(reservation) %>" class="reservation-card <%= status_class = case reservation.status
+  when 'pending' then 'status-pending'
+  when 'cancelled' then 'status-cancelled'
+  when 'confirmed' then 'status-confirmed'
+  when 'completed' then 'status-completed'
+  else 'status-default'
+end %>">
+  <div class="reservation-card-body">
+    <h5 class="reservation-card-title">
+      Reservation for <%= if reservation.table
+                            "Table ##{reservation.table.id} — Number of tables: #{reservation.table.quantity} (Cap: #{reservation.table.capacity})"
+                          else
+                            'Table'
+                          end %>
+    </h5>
+
+    <p class="reservation-card-text reservation-card-times mb-1">
+      <% if reservation.timeslot && reservation.timeslot.date.present? && reservation.timeslot.start_time.present? %>
+        <%= reservation.timeslot.date.strftime('%B %-d, %Y') %>
+        &nbsp;from&nbsp;<%= reservation.timeslot.start_time.strftime('%-I:%M %p') %>
+        &nbsp;to&nbsp;<%= (reservation.timeslot.end_time.present? ? reservation.timeslot.end_time.strftime('%-I:%M %p') : '') %>
+      <% else %>
+        <em>No timeslot set</em>
+      <% end %>
+    </p>
+
+    <p class="reservation-card-text"><strong>People:</strong> <%= reservation.num_people %></p>
+
+    <div class="reservation-card-actions">
+      <%= link_to 'View', reservation_path(reservation), class: 'btn btn-sm btn-outline-secondary me-2' if defined?(reservation_path) %>
+      <% if current_user == user && cancellable?(reservation) %>
+        <%= button_to 'Cancel', cancel_reservation_path(reservation), method: :patch, data: { confirm: 'Cancel this reservation?' }, form: { class: 'inline-button' }, class: 'btn btn-sm btn-danger' %>
+      <% end %>
+    </div>
+  </div>
+</div>

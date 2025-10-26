@@ -20,7 +20,7 @@
   </p>
 
   <p>
-    <strong>Table quantity:</strong>
+    <strong>Number of Tables Reserved:</strong>
     <%= @reservation.table&.quantity || 'Unassigned' %>
     <% if @reservation.table&.capacity %>
       (Capacity: <%= @reservation.table.capacity %>)
@@ -40,10 +40,11 @@
 
   <p>
     <strong>Timeslot:</strong>
-    <% if @reservation.timeslot %>
-      <%= @reservation.timeslot.date.strftime('%B %-d, %Y') %>
-      from <%= @reservation.timeslot.start_time.strftime('%-I:%M %p') %>
-      to <%= @reservation.timeslot.end_time.strftime('%-I:%M %p') %>
+    <% ts = @reservation.timeslot %>
+    <% if ts && ts.date.present? %>
+      <%= ts.date.strftime('%B %-d, %Y') %>
+      from <%= ts.start_time&.strftime('%-I:%M %p') || 'N/A' %>
+      to <%= ts.end_time&.strftime('%-I:%M %p') || 'N/A' %>
     <% else %>
       N/A
     <% end %>
@@ -56,5 +57,5 @@
 
 
 <div class="mt-3">
-  <%= link_to 'Back to reservations', reservations_path, class: 'btn btn-secondary' %>
+  <%= link_to 'Back', (@reservation.user ? user_path(@reservation.user) : reservations_path), class: 'btn btn-primary' %>
 </div>

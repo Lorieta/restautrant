@@ -90,7 +90,10 @@ class UsersController < ApplicationController
   end
 
   def set_user
-    @user = User.find(params[:id])
+    @user = User.find_by(id: params[:id])
+    return if @user
+
+    redirect_to root_path, alert: "User not found."
   end
 
   def require_same_user_or_admin

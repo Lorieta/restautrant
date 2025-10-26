@@ -26,29 +26,19 @@
 
       <h2 class="mt-4">Reservations</h2>
       <% if @user.reservations.any? %>
-        <ul class="list-group">
+        <div class="reservation-cards">
           <% @user.reservations.order(created_at: :desc).each do |r| %>
-            <li class="list-group-item">
-              <strong>Reservation for <%= if r.table
-                                              "Table ##{r.table.id} — Number of tables: #{r.table.quantity} (Cap: #{r.table.capacity})"
-                                            else
-                                              'Table'
-                                            end %></strong>
-              <div>
-                <% if r.timeslot %>
-                  <%= r.timeslot.date.strftime('%B %-d, %Y') %>
-                  &nbsp;from&nbsp;<%= r.timeslot.start_time.strftime('%-I:%M %p') %>
-                  &nbsp;to&nbsp;<%= r.timeslot.end_time.strftime('%-I:%M %p') %>
-                <% end %>
-              </div>
-              <div>People: <%= r.num_people %></div>
-              <%= link_to 'View', reservation_path(r), class: 'btn btn-sm btn-outline-secondary ms-2' if defined?(reservation_path) %>
-              <% if current_user == @user && cancellable?(r) %>
-                <%= link_to 'Cancel', reservation_path(r), method: :delete, data: { confirm: 'Cancel this reservation?' }, class: 'btn btn-sm btn-danger ms-2' %>
-              <% end %>
-            </li>
+            <% status_class = case r.status
+              when 'pending' then 'status-pending'
+              when 'cancelled' then 'status-cancelled'
+              when 'confirmed' then 'status-confirmed'
+              when 'completed' then 'status-completed'
+              else 'status-default'
+            end %>
+
+            <%= render partial: 'reservations/card', locals: { reservation: r, user: @user } %>
           <% end %>
-        </ul>
+        </div>
       <% else %>
         <p>No reservations yet.</p>
       <% end %>

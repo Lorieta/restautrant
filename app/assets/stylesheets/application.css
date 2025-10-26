@@ -399,6 +399,124 @@ header {
 
 /* Responsive: collapse sidebar on small screens */
 
+/* Reservation card styles (custom, non-Bootstrap)
+   These provide a lightweight card UI and status-based coloring without relying
+   on Bootstrap classes. They are intentionally simple and easy to tweak. */
+.reservation-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* slightly tighter */
+}
+
+.reservation-card {
+    background: #ffffff;
+    border-radius: 6px;
+    /* slightly smaller radius */
+    padding: 0;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    /* lighter shadow */
+    overflow: hidden;
+    font-size: 0.95rem;
+    /* slightly smaller overall text */
+}
+
+.reservation-card-body {
+    padding: 0.55rem 0.75rem;
+    /* reduced vertical/horizontal padding */
+}
+
+.reservation-card-title {
+    margin: 0 0 0.3rem 0;
+    font-size: 0.95rem;
+    /* smaller title */
+    font-weight: 600;
+}
+
+.reservation-card-text {
+    margin: 0.2rem 0;
+    color: inherit;
+}
+
+.reservation-card-actions {
+    margin-top: 0.45rem;
+    display: flex;
+    gap: 0.4rem;
+    /* reduced gap */
+    align-items: center;
+}
+
+/* Inline form helper used by button_to to keep buttons on the same line */
+.inline-button {
+    display: inline;
+    margin: 0;
+}
+
+/* Status colors (background + text) */
+.status-pending {
+    /* amber/tawny */
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.06), rgba(248, 249, 250, 0.02));
+    color: #92400e;
+    /* darker amber */
+}
+
+.status-cancelled {
+    /* red */
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.06), rgba(248, 249, 250, 0.02));
+    color: #7a0b0b;
+}
+
+.status-confirmed {
+    /* green */
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.06), rgba(248, 249, 250, 0.02));
+    color: #065f46;
+    /* darker green */
+}
+
+.status-completed {
+    /* blue for completed */
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.06), rgba(248, 249, 250, 0.02));
+    color: #1e40af;
+    /* darker blue */
+}
+
+.status-default {
+    background: #f8f9fa;
+    color: #212529;
+}
+
+/* Buttons: small visual adjustments for the existing .btn classes used elsewhere */
+.btn {
+    display: inline-block;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.btn-outline-secondary {
+    background: transparent;
+    border-color: #ced4da;
+    color: #495057;
+}
+
+.btn-danger {
+    background: #d9534f;
+    color: #fff;
+    border-color: #d43f3a;
+}
+
+.btn-outline-secondary:hover {
+    background: #f1f3f5;
+}
+
+
 /* Generic card styles (lightweight, non-Bootstrap shadowed card) */
 .card {
     /* Add shadows to create the "card" effect */

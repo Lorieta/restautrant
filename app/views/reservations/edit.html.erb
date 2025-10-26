@@ -29,7 +29,7 @@
               <%= f.number_field :num_people, min: 1 %>
             </p>
 
-            <p><%= f.submit "Update Reservation", class: 'btn btn-primary' %></p>
+            <p><%= link_to "Update Reservation", admin_dashboard_path, class: 'btn btn-primary' %></p>
           <% end %>
         </div>
         <div class="card-footer text-center">

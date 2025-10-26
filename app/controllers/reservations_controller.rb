@@ -1,7 +1,7 @@
 class ReservationsController < ApplicationController
   include ActionView::RecordIdentifier
   before_action :require_login
-  before_action :set_reservation, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :cancel ]
 
   def index
     # Show only reservations for the currently logged-in user
@@ -34,6 +34,10 @@ class ReservationsController < ApplicationController
 
   def update
     if @reservation.update(reservation_params)
+      # Ensure the reservation and its associations reflect the persisted state
+      # before rendering partials (reload clears any cached association targets).
+      @reservation.reload
+
       respond_to do |format|
         format.turbo_stream do
           streams = []
@@ -75,6 +79,51 @@ class ReservationsController < ApplicationController
     respond_to do |format|
       format.turbo_stream { render turbo_stream: turbo_stream.remove(reservation_dom_id) }
       format.html { redirect_back fallback_location: reservations_path, notice: "Reservation canceled.", status: :see_other }
+    end
+  end
+
+  def cancel
+    # If this was a GET request (user navigated to the URL directly), do not perform
+    # the cancellation — redirect safely with a helpful message. Only allow side
+    # effects for PATCH requests (method from the Cancel button).
+    if request.get?
+      redirect_to reservation_path(@reservation), alert: "Use the Cancel button to cancel this reservation."
+      return
+    end
+
+    # Prevent cancellation within 2 hours of the reservation start or if it already started
+    if @reservation.timeslot && @reservation.timeslot.date && @reservation.timeslot.start_time
+      start_of_reservation = Time.zone.local(
+        @reservation.timeslot.date.year,
+        @reservation.timeslot.date.month,
+        @reservation.timeslot.date.day,
+        @reservation.timeslot.start_time.hour,
+        @reservation.timeslot.start_time.min,
+        @reservation.timeslot.start_time.sec
+      )
+
+      if start_of_reservation < 2.hours.from_now || start_of_reservation <= Time.zone.now
+        redirect_to reservations_path, alert: "Cannot cancel reservations less than 2 hours before the start time or after it has started.", status: :see_other
+        return
+      end
+    end
+
+    @reservation.status = :cancelled
+
+    if @reservation.save
+      @reservation.reload
+
+      respond_to do |format|
+        format.turbo_stream do
+          streams = []
+          streams << turbo_stream.replace(dom_id(@reservation), partial: 'reservations/card', locals: { reservation: @reservation, user: @reservation.user })
+          streams << turbo_stream.replace("#{dom_id(@reservation)}-calendar", partial: 'reservations/calendar_item', locals: { reservation: @reservation })
+          render turbo_stream: streams
+        end
+        format.html { redirect_back fallback_location: reservations_path, notice: "Reservation canceled.", status: :see_other }
+      end
+    else
+      redirect_back fallback_location: reservations_path, alert: @reservation.errors.full_messages.to_sentence
     end
   end
 
