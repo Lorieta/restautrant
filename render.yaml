@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: restaurant
+    env: ruby
+    buildCommand: "bundle install && bundle exec rake assets:precompile"
+    startCommand: "bundle exec puma -t 5:5 -p ${PORT:-3000}"
+    postDeployCommand: "bundle exec rails db:migrate"
