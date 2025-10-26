@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:session][:password])
       log_in user
       # Handle 'remember me' checkbox
-      if params.dig(:session, :remember_me) == '1'
+      if params.dig(:session, :remember_me) == "1"
         remember(user)
       else
         forget(user)
@@ -34,7 +34,7 @@ class SessionsController < ApplicationController
       flash.now[:alert] = "Invalid email or password."
       # Render the home page (which now includes the login form) so errors appear inline there.
       # Return 422 so Turbo treats this as a validation/failed form response rather than a full successful HTML response.
-      render 'application/home', status: :unprocessable_entity
+      render "application/home", status: :unprocessable_entity
     end
   end
 

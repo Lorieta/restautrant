@@ -13,7 +13,7 @@ class TimeslotsController < ApplicationController
     @timeslots = Timeslot.where(date: range).order(:date, :start_time)
     # Pre-group timeslots by date for reliable rendering in the calendar view
     @timeslots_by_date = @timeslots.group_by(&:date)
-    # Ensure the tables list is available for the top section of the view
+  # Ensure the tables list is available for the top section of the view
   # Some deployments don't have a `name` column on tables; order by id instead
   @tables = Table.all.order(:id)
   end

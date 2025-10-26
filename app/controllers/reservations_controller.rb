@@ -41,9 +41,9 @@ class ReservationsController < ApplicationController
       respond_to do |format|
         format.turbo_stream do
           streams = []
-          streams << turbo_stream.replace(dom_id(@reservation), partial: 'reservations/admin_row', locals: { reservation: @reservation })
+          streams << turbo_stream.replace(dom_id(@reservation), partial: "reservations/admin_row", locals: { reservation: @reservation })
           # Replace the calendar item (if present) so calendar view updates in-place. Calendar item id is "#{dom_id}-calendar".
-          streams << turbo_stream.replace("#{dom_id(@reservation)}-calendar", partial: 'reservations/calendar_item', locals: { reservation: @reservation })
+          streams << turbo_stream.replace("#{dom_id(@reservation)}-calendar", partial: "reservations/calendar_item", locals: { reservation: @reservation })
           render turbo_stream: streams
         end
         format.html { redirect_to @reservation, notice: "Reservation updated successfully!", status: :see_other }
@@ -116,8 +116,8 @@ class ReservationsController < ApplicationController
       respond_to do |format|
         format.turbo_stream do
           streams = []
-          streams << turbo_stream.replace(dom_id(@reservation), partial: 'reservations/card', locals: { reservation: @reservation, user: @reservation.user })
-          streams << turbo_stream.replace("#{dom_id(@reservation)}-calendar", partial: 'reservations/calendar_item', locals: { reservation: @reservation })
+          streams << turbo_stream.replace(dom_id(@reservation), partial: "reservations/card", locals: { reservation: @reservation, user: @reservation.user })
+          streams << turbo_stream.replace("#{dom_id(@reservation)}-calendar", partial: "reservations/calendar_item", locals: { reservation: @reservation })
           render turbo_stream: streams
         end
         format.html { redirect_back fallback_location: reservations_path, notice: "Reservation canceled.", status: :see_other }

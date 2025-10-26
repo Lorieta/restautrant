@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
                    .joins(:timeslot)
                    .where(timeslots: { date: visible_range })
                    .includes(:timeslot, :table)
-                   .order('timeslots.date ASC, timeslots.start_time ASC')
+                   .order("timeslots.date ASC, timeslots.start_time ASC")
     @reservations_by_date = @user_reservations.group_by { |reservation| reservation.timeslot&.date }
   end
 
@@ -33,5 +33,4 @@ class ApplicationController < ActionController::Base
   rescue ArgumentError
     Date.current
   end
-
 end

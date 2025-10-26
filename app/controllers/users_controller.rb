@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
-  before_action :require_admin, only: [:admin, :index]
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :require_same_user_or_admin, only: [:edit, :update, :destroy]
-  before_action :require_login, only: [:edit, :update, :destroy]
+  before_action :require_admin, only: [ :admin, :index ]
+  before_action :set_user, only: [ :show, :edit, :update, :destroy ]
+  before_action :require_same_user_or_admin, only: [ :edit, :update, :destroy ]
+  before_action :require_login, only: [ :edit, :update, :destroy ]
 
   def home
   end
@@ -74,7 +74,7 @@ class UsersController < ApplicationController
     # Scope reservations to the calendar-visible range for performance
     start_date = params.fetch(:start_date, Date.today).to_date
     range = start_date.beginning_of_month.beginning_of_week..start_date.end_of_month.end_of_week
- 
+
   @reservations = Reservation.joins(:timeslot).where(timeslots: { date: range }).includes(:user, :timeslot)
     @reservations_by_date = @reservations.group_by { |r| r.timeslot&.date }
     @tables = Table.all
@@ -85,7 +85,7 @@ class UsersController < ApplicationController
 
   def user_params
     # Permit :role only when the current_user is an admin. Regular users cannot set their role.
-    permitted = [:name, :email, :phone, :password, :password_confirmation]
+    permitted = [ :name, :email, :phone, :password, :password_confirmation ]
     permitted << :role if current_user&.admin?
 
     params.require(:user).permit(permitted)

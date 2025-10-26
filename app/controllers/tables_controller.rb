@@ -47,7 +47,7 @@ class TablesController < ApplicationController
       respond_to do |format|
         # For Turbo requests render the shared error partial into a designated
         # container on the index page so the error messages appear inline.
-        format.turbo_stream { render turbo_stream: turbo_stream.replace('table_errors', partial: 'shared/error_messages', locals: { object: @table }), status: :unprocessable_entity }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("table_errors", partial: "shared/error_messages", locals: { object: @table }), status: :unprocessable_entity }
         format.html { redirect_back fallback_location: tables_path, alert: message }
       end
     end
@@ -60,6 +60,6 @@ class TablesController < ApplicationController
   end
 
   def table_params
-    params.require(:table).permit(:quantity, :capacity, timeslots_attributes: [:id, :date, :start_time, :end_time, :_destroy])
+    params.require(:table).permit(:quantity, :capacity, timeslots_attributes: [ :id, :date, :start_time, :end_time, :_destroy ])
   end
 end

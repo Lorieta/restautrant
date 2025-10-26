@@ -19,12 +19,12 @@ class User < ApplicationRecord
   # Normalize email to lowercase and validate uniqueness case-insensitively
   before_validation :downcase_email
 
-  validates :name, presence: true, length: { minimum: 2 }, format: { without: NO_HTML_REGEX, message: 'must not contain HTML' }
-  validates :phone, format: { without: NO_HTML_REGEX, message: 'must not contain HTML' }, allow_blank: true
+  validates :name, presence: true, length: { minimum: 2 }, format: { without: NO_HTML_REGEX, message: "must not contain HTML" }
+  validates :phone, format: { without: NO_HTML_REGEX, message: "must not contain HTML" }, allow_blank: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 255 },
                     format: { with: EMAIL_REGEX }
-  validates :password, presence: true, length: { minimum: 8 }, format: { with: PASSWORD_FORMAT, message: 'must include uppercase, lowercase, digit and special character' }, on: :create
-  validates :password, length: { minimum: 8 }, format: { with: PASSWORD_FORMAT, message: 'must include uppercase, lowercase, digit and special character' }, allow_blank: true, on: :update
+  validates :password, presence: true, length: { minimum: 8 }, format: { with: PASSWORD_FORMAT, message: "must include uppercase, lowercase, digit and special character" }, on: :create
+  validates :password, length: { minimum: 8 }, format: { with: PASSWORD_FORMAT, message: "must include uppercase, lowercase, digit and special character" }, allow_blank: true, on: :update
 
   # Ensure we never remove the last admin by role change or deletion
   validate :cannot_downgrade_last_admin, if: :will_save_change_to_role?
@@ -34,9 +34,9 @@ class User < ApplicationRecord
   def self.digest(string)
     cost = if ActiveModel::SecurePassword.min_cost
              BCrypt::Engine::MIN_COST
-           else
+    else
              BCrypt::Engine.cost
-           end
+    end
     BCrypt::Password.create(string, cost: cost)
   end
 
@@ -76,21 +76,21 @@ class User < ApplicationRecord
     previous = role_was
     # role_was can be stored as string (enum) or integer; normalize to string
     previous = previous.to_s
-    return unless previous == 'admin' && role != 'admin'
+    return unless previous == "admin" && role != "admin"
 
     other_admins = User.where.not(id: id).where(role: User.roles[:admin]).count
     if other_admins.zero?
-      errors.add(:role, 'cannot remove the last admin')
+      errors.add(:role, "cannot remove the last admin")
     end
   end
 
   def prevent_destroying_last_admin
     # If this user is an admin and there are no other admins, prevent destroy
-    return unless role == 'admin'
+    return unless role == "admin"
 
     other_admins = User.where.not(id: id).where(role: User.roles[:admin]).count
     if other_admins.zero?
-      errors.add(:base, 'Cannot delete the last admin user')
+      errors.add(:base, "Cannot delete the last admin user")
       throw(:abort)
     end
   end
