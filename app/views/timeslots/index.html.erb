@@ -24,9 +24,9 @@
               <tr>
                 <td style="padding:8px; vertical-align:middle;"><%= table.quantity %></td>
                 <td style="padding:8px; text-align:right; vertical-align:middle;"><%= table.capacity %></td>
-                <td style="padding:8px; vertical-align:middle;"><%= ts.date.strftime('%Y-%m-%d') %></td>
-                <td style="padding:8px; vertical-align:middle;"><%= ts.start_time.strftime('%I:%M %p') %></td>
-                <td style="padding:8px; vertical-align:middle;"><%= ts.end_time.strftime('%I:%M %p') %></td>
+                <td style="padding:8px; vertical-align:middle;"><%= ts.date.present? ? ts.date.strftime('%Y-%m-%d') : '-' %></td>
+                <td style="padding:8px; vertical-align:middle;"><%= ts.start_time.present? ? ts.start_time.strftime('%I:%M %p') : '-' %></td>
+                <td style="padding:8px; vertical-align:middle;"><%= ts.end_time.present? ? ts.end_time.strftime('%I:%M %p') : '-' %></td>
                 <td style="padding:8px; text-align:center; vertical-align:middle;">
                   <%= link_to 'Edit', edit_timeslot_path(ts), class: 'btn btn-sm' %> |
                   <%= link_to 'Delete', timeslot_path(ts),

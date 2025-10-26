@@ -398,6 +398,107 @@ header {
 }
 
 /* Responsive: collapse sidebar on small screens */
+
+/* Generic card styles (lightweight, non-Bootstrap shadowed card) */
+.card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure images inside cards are full width */
+.card img {
+    width: 100%;
+    display: block;
+}
+
+/* Add some padding inside the card body (limit scope to .card-body) */
+.card .card-body {
+    padding: 2px 16px;
+}
+
+/* Footer spacing for centered actions */
+.card .card-footer {
+    background: transparent;
+    border-top: none;
+    padding: 12px 16px;
+}
+
+/* Center page helper: vertically & horizontally center a single column/card */
+.center-page {
+    min-height: calc(100vh - 2rem);
+    /* account for body padding */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+/* Uniform form controls inside cards (and opt-in via .form-control) */
+.form-control,
+.card .card-body input[type="text"],
+.card .card-body input[type="number"],
+.card .card-body input[type="email"],
+.card .card-body input[type="date"],
+.card .card-body input[type="time"],
+.card .card-body input[type="search"],
+.card .card-body select,
+.card .card-body textarea,
+form input[type="text"],
+form input[type="number"],
+form input[type="email"],
+form input[type="date"],
+form input[type="time"],
+form input[type="search"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background: #ffffff;
+    box-sizing: border-box;
+    font-size: 1rem;
+    color: #212529;
+    margin-bottom: 0.75rem;
+}
+
+/* Slightly different appearance for smaller inputs if needed */
+.form-control-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Make select controls use system appearance while keeping styling */
+.card .card-body select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, #495057 50%), linear-gradient(135deg, #495057 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 2.25rem;
+}
+
+/* Focus state */
+.form-control:focus,
+.card .card-body input:focus,
+.card .card-body select:focus,
+.card .card-body textarea:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
+}
+
 @media (max-width: 768px) {
     .admin-wrapper {
         flex-direction: column;

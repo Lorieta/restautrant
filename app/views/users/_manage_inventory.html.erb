@@ -40,7 +40,7 @@
                           <span class="text-muted">
                             (<%= ts.start_time.strftime('%H:%M') rescue '' %> - <%= ts.end_time.strftime('%H:%M') rescue '' %>)
                           </span>
-                          
+                          <%= link_to 'Delete', timeslot_path(ts), method: :delete, class: 'btn btn-sm btn-link text-danger p-0 ms-2', data: { action: 'confirm-modal#ask', confirm_modal_title: 'Delete Timeslot', confirm_modal_message: "Delete timeslot on #{ts.date} (#{ts.start_time.strftime('%H:%M') rescue ''} - #{ts.end_time.strftime('%H:%M') rescue ''})?", confirm_modal_confirm_text: 'Delete', confirm_modal_confirm_class: 'btn btn-danger' } %>
                         </li>
                       <% end %>
                     </ul>
@@ -52,6 +52,7 @@
                   <% end %>
                 </td>
                 <td>
+                  <%= link_to 'Add Timeslot', new_timeslot_path(table_id: t.id), class: 'btn btn-sm btn-outline-success me-2' %>
                   <%= link_to 'Edit Table', edit_table_path(t), class: 'btn btn-sm btn-outline-primary' %>
                   <%= link_to 'Delete Table', table_path(t), method: :delete, class: 'btn btn-sm btn-outline-danger', data: { action: 'confirm-modal#ask', confirm_modal_title: 'Delete Table', confirm_modal_message: "Delete table ##{t.id} (Number of tables: #{t.quantity}, Cap: #{t.capacity})?", confirm_modal_confirm_text: 'Delete', confirm_modal_confirm_class: 'btn btn-danger' } %>
                 </td>

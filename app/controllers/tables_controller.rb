@@ -27,7 +27,8 @@ class TablesController < ApplicationController
 
   def update
     if @table.update(table_params)
-      redirect_to tables_path, notice: "Table updated."
+      # After updating a table, redirect back to the admin dashboard instead of the table show page
+      redirect_to admin_dashboard_path, notice: "Table updated."
     else
       render :edit
     end

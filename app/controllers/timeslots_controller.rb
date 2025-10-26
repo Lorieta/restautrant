@@ -14,19 +14,21 @@ class TimeslotsController < ApplicationController
     # Pre-group timeslots by date for reliable rendering in the calendar view
     @timeslots_by_date = @timeslots.group_by(&:date)
     # Ensure the tables list is available for the top section of the view
-    @tables = Table.all.order(:name)
+  # Some deployments don't have a `name` column on tables; order by id instead
+  @tables = Table.all.order(:id)
   end
 
   def new
-    @timeslot = Timeslot.new
+    # allow pre-filling table_id when coming from a table context
+    @timeslot = Timeslot.new(table_id: params[:table_id])
   end
 
   def create
     @timeslot = Timeslot.new(timeslot_params)
     if @timeslot.save
-      redirect_to timeslots_path, notice: "Timeslot created successfully."
+      redirect_to admin_dashboard_path, notice: "Timeslot created successfully."
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -37,7 +39,7 @@ class TimeslotsController < ApplicationController
     if @timeslot.update(timeslot_params)
       redirect_to timeslots_path, notice: "Timeslot updated."
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
