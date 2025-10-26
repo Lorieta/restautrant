@@ -6,6 +6,12 @@ class SessionsController < ApplicationController
     user = User.find_by(email: params[:session][:email].downcase)
     if user && user.authenticate(params[:session][:password])
       log_in user
+      # Handle 'remember me' checkbox
+      if params.dig(:session, :remember_me) == '1'
+        remember(user)
+      else
+        forget(user)
+      end
       # Redirect based on user role
       if user.admin?
         redirect_to admin_dashboard_path, notice: "Welcome back, #{user.name}!"
@@ -24,8 +30,11 @@ class SessionsController < ApplicationController
         @login_resource.errors.add(:email, "User not found")
       end
 
-      # Render the login form with the validation messages available via @login_resource
-      render :new
+      # Add a flash alert so a brief message appears in addition to the inline field errors.
+      flash.now[:alert] = "Invalid email or password."
+      # Render the home page (which now includes the login form) so errors appear inline there.
+      # Return 422 so Turbo treats this as a validation/failed form response rather than a full successful HTML response.
+      render 'application/home', status: :unprocessable_entity
     end
   end
 

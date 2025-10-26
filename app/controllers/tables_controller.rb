@@ -16,7 +16,7 @@ class TablesController < ApplicationController
     @table = Table.new(table_params)
 
     if @table.save
-      redirect_to tables_path, notice: "Table and Timeslot created successfully."
+      redirect_to admin_dashboard_path, notice: "Table and Timeslot created successfully."
     else
       render :new
     end

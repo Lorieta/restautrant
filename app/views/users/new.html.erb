@@ -3,35 +3,35 @@
 <%= render 'shared/error_messages', object: user %>
 <%= form_with model: user, local: true do |f| %>
   <p>
-    Name: <%= f.text_field :name, class: "form-control #{'is-invalid' if user.errors[:name].any?}" %>
+    Name: <%= f.text_field :name, class: "form-control #{'is-invalid' if user.errors[:name].any?}", autocomplete: 'name' %>
     <% if user.errors[:name].any? %>
       <div class="invalid-feedback"><%= user.errors[:name].join(', ') %></div>
     <% end %>
   </p>
 
   <p>
-    Email: <%= f.email_field :email, class: "form-control #{'is-invalid' if user.errors[:email].any?}" %>
+    Email: <%= f.email_field :email, class: "form-control #{'is-invalid' if user.errors[:email].any?}", autocomplete: 'email' %>
     <% if user.errors[:email].any? %>
       <div class="invalid-feedback"><%= user.errors[:email].join(', ') %></div>
     <% end %>
   </p>
 
   <p>
-    Phone: <%= f.text_field :phone, class: "form-control #{'is-invalid' if user.errors[:phone].any?}" %>
+    Phone: <%= f.telephone_field :phone, class: "form-control #{'is-invalid' if user.errors[:phone].any?}", autocomplete: 'tel' %>
     <% if user.errors[:phone].any? %>
       <div class="invalid-feedback"><%= user.errors[:phone].join(', ') %></div>
     <% end %>
   </p>
 
   <p>
-    Password: <%= f.password_field :password, class: "form-control #{'is-invalid' if user.errors[:password].any?}" %>
+    Password: <%= f.password_field :password, class: "form-control #{'is-invalid' if user.errors[:password].any?}", autocomplete: 'new-password' %>
     <% if user.errors[:password].any? %>
       <div class="invalid-feedback"><%= user.errors[:password].join(', ') %></div>
     <% end %>
   </p>
 
   <p>
-    Confirm Password: <%= f.password_field :password_confirmation, class: "form-control #{'is-invalid' if user.errors[:password_confirmation].any?}" %>
+    Confirm Password: <%= f.password_field :password_confirmation, class: "form-control #{'is-invalid' if user.errors[:password_confirmation].any?}", autocomplete: 'new-password' %>
     <% if user.errors[:password_confirmation].any? %>
       <div class="invalid-feedback"><%= user.errors[:password_confirmation].join(', ') %></div>
     <% end %>

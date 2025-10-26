@@ -1,6 +1,9 @@
 class User < ApplicationRecord
   has_secure_password
 
+  # Virtual attribute for remembering users (persistent login)
+  attr_accessor :remember_token
+
   # Associations
   has_many :reservations, dependent: :destroy
 
@@ -26,6 +29,40 @@ class User < ApplicationRecord
   # Ensure we never remove the last admin by role change or deletion
   validate :cannot_downgrade_last_admin, if: :will_save_change_to_role?
   before_destroy :prevent_destroying_last_admin
+
+  # Returns the hash digest of the given string using BCrypt.
+  def self.digest(string)
+    cost = if ActiveModel::SecurePassword.min_cost
+             BCrypt::Engine::MIN_COST
+           else
+             BCrypt::Engine.cost
+           end
+    BCrypt::Password.create(string, cost: cost)
+  end
+
+  # Returns a new random token
+  def self.new_token
+    SecureRandom.urlsafe_base64
+  end
+
+  # Remembers a user in the database for use in persistent sessions.
+  def remember
+    self.remember_token = User.new_token
+    update_column(:remember_digest, User.digest(remember_token))
+  end
+
+  # Forgets a user (remove remember_digest)
+  def forget
+    update_column(:remember_digest, nil)
+  end
+
+  # Returns true if the given token matches the digest for the provided attribute.
+  def authenticated?(attribute, token)
+    digest = send("#{attribute}_digest")
+    return false if digest.nil?
+
+    BCrypt::Password.new(digest).is_password?(token)
+  end
 
   private
 

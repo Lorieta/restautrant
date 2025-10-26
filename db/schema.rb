@@ -50,8 +50,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_26_152000) do
     t.string "name"
     t.string "password_digest"
     t.string "phone"
+    t.string "remember_digest"
     t.integer "role"
     t.datetime "updated_at", null: false
+    t.index ["remember_digest"], name: "index_users_on_remember_digest"
   end
 
   add_foreign_key "reservations", "tables"

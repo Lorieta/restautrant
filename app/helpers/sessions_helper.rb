@@ -4,7 +4,18 @@ module SessionsHelper
   end
 
   def current_user
-    @current_user ||= User.find_by(id: session[:user_id])
+    # First try session
+    if (user_id = session[:user_id])
+      @current_user ||= User.find_by(id: user_id)
+    elsif (user_id = cookies.signed[:user_id])
+      # Fall back to persistent cookie
+      user = User.find_by(id: user_id)
+      if user && user.authenticated?(:remember, cookies[:remember_token])
+        log_in(user)
+        @current_user = user
+      end
+    end
+    @current_user
   end
 
   def logged_in?
@@ -14,6 +25,22 @@ module SessionsHelper
   def log_out
     session.delete(:user_id)
     @current_user = nil
+    cookies.delete(:user_id)
+    cookies.delete(:remember_token)
+  end
+
+  # Remember a user in a persistent cookie
+  def remember(user)
+    user.remember
+    cookies.signed[:user_id] = { value: user.id, expires: 20.years.from_now }
+    cookies[:remember_token] = { value: user.remember_token, expires: 20.years.from_now }
+  end
+
+  # Forget a persistent session
+  def forget(user)
+    user.forget
+    cookies.delete(:user_id)
+    cookies.delete(:remember_token)
   end
 
   # Require any logged-in user

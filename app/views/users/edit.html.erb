@@ -13,7 +13,7 @@
 
         <div class="mb-3">
           <%= f.label :email, class: 'form-label' %>
-          <%= f.email_field :email, class: 'form-control' %>
+          <%= f.email_field :email, class: 'form-control', autocomplete: 'email' %>
         </div>
 
         <div class="mb-3">
@@ -42,7 +42,7 @@
 
         <div class="mb-3">
           <%= f.label :password_confirmation, class: 'form-label' %>
-          <%= f.password_field :password_confirmation, class: 'form-control' %>
+          <%= f.password_field :password_confirmation, class: 'form-control', autocomplete: 'new-password' %>
         </div>
 
         <%= f.submit 'Save changes', class: 'btn btn-primary' %>

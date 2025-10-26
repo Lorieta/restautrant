@@ -28,10 +28,19 @@
   
     </header>
 
+    <%# Flash messages (use flash.now for render) %>
+    <div class="container" style="max-width:1100px; margin: 0 auto;">
+      <% flash.each do |key, msg| %>
+        <% css_class = (key.to_sym == :notice) ? 'alert alert-info' : 'alert alert-danger' %>
+        <div class="<%= css_class %>" role="alert" style="margin:0.5rem 0; padding:0.75rem 1rem; border-radius:6px; background:#f8d7da; color:#842029;">
+          <%= msg %>
+        </div>
+      <% end %>
+    </div>
+
     <main>
       <%= yield %>
 
-     
     </main>
     <%= render 'shared/confirm_modal' %>
   </body>
