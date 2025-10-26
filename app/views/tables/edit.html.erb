@@ -1,28 +1,89 @@
 <h2>Edit Table</h2>
 
-<% if @table.errors.any? %>
-  <div id="error_explanation" style="color: red; margin-bottom: 1em;">
-    <h4><%= pluralize(@table.errors.count, "error") %> prevented this table from being saved:</h4>
-    <ul>
-      <% @table.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-    </ul>
-  </div>
+<% if @table %>
+  <% if @table.errors.any? || @table.timeslots.any? { |ts| ts.errors.any? } %>
+    <div id="error_explanation" style="color: red; margin-bottom: 1em;">
+      <h4>
+        <%= pluralize(@table.errors.count + @table.timeslots.sum { |ts| ts.errors.count }, "error") %>
+        prevented this table from being saved:
+      </h4>
+      <ul>
+        <% @table.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        <% @table.timeslots.each do |ts| %>
+          <% ts.errors.full_messages.each do |msg| %>
+            <li>Timeslot: <%= msg %></li>
+          <% end %>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: @table, local: true do |f| %>
+    <div class="card" style="max-width: 720px;">
+      <div class="card-header">Edit Table and Timeslots</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="table_quantity">Quantity of tables</label>
+            <%= f.number_field :quantity, id: 'table_quantity', min: 1, placeholder: 'Number of tables', class: 'form-control' %>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="table_capacity">Capacity</label>
+            <%= f.number_field :capacity, id: 'table_capacity', min: 1, placeholder: 'Number of seats (capacity)', class: 'form-control' %>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <%# Render existing timeslots for this table; allow editing multiple %>
+        <% if @table.timeslots.any? %>
+          <% @table.timeslots.each_with_index do |ts_obj, idx| %>
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Date</label>
+                <%= f.fields_for :timeslots, ts_obj do |ts| %>
+                  <%= ts.date_field :date, class: 'form-control' %>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Start Time</label>
+                  <%= ts.time_field :start_time, class: 'form-control' %>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">End Time</label>
+                  <%= ts.time_field :end_time, class: 'form-control' %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <%# build one blank timeslot for editing convenience %>
+          <% @table.timeslots.build %>
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label class="form-label">Date</label>
+              <%= f.fields_for :timeslots do |ts| %>
+                <%= ts.date_field :date, class: 'form-control' %>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Start Time</label>
+                <%= ts.time_field :start_time, class: 'form-control' %>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">End Time</label>
+                <%= ts.time_field :end_time, class: 'form-control' %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="card-footer d-flex justify-content-between align-items-center">
+        <%= link_to 'Back to Tables', tables_path, class: 'btn btn-outline-secondary' %>
+        <%= f.submit 'Update Table and Timeslots', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <p class="text-muted">Table not found.</p>
 <% end %>
-
-<%= form_with model: @table, local: true do |f| %>
-  <p>
-    <strong>Name:</strong><br>
-    <%= f.text_field :name, placeholder: "e.g. Table 1 or VIP Corner" %>
-  </p>
-
-  <p>
-    <strong>Seats:</strong><br>
-    <%= f.number_field :seats, min: 1, placeholder: "Number of seats" %>
-  </p>
-
-  <p><%= f.submit "Update Table" %></p>
-<% end %>
-
-<%= link_to "Back", tables_path %>

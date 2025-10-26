@@ -3,6 +3,11 @@ class Reservation < ApplicationRecord
   belongs_to :table
   belongs_to :timeslot
 
+  # Use explicit positional first argument to avoid potential keyword-only
+  # argument parsing issues on some Ruby versions (see `User` model for
+  # reference).
+  enum :status, { pending: 0, confirmed: 1, cancelled: 2, completed: 3 }
+
   validates :num_people, presence: true, numericality: { greater_than: 0 }
   validate :table_capacity_check
   validate :two_hours_before_rule
@@ -11,8 +16,8 @@ class Reservation < ApplicationRecord
   private
 
   def table_capacity_check
-    if table && num_people && num_people > table.seats
-      errors.add(:num_people, "exceeds the table's seat capacity")
+    if table && num_people && num_people > table.capacity
+      errors.add(:num_people, "exceeds the table's capacity")
     end
   end
 

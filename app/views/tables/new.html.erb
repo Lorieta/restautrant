@@ -1,20 +1,58 @@
-<h2>New Table</h2>
+<h2>Create Inventory</h2>
 
 <% if @table && @table.errors.any? %>
   <div id="error_explanation">
-    <h2><%= pluralize(@table.errors.count, "error") %> prohibited this table from being saved:</h2>
+    <h2><%= pluralize(@table.errors.count, 'error') %> prevented this from being saved:</h2>
     <ul>
       <% @table.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
+      <% end %>
+      <% @table.timeslots.each do |ts| %>
+        <% ts.errors.full_messages.each do |msg| %>
+          <li>Timeslot: <%= msg %></li>
+        <% end %>
       <% end %>
     </ul>
   </div>
 <% end %>
 
-<%= form_with model: @table, local: true do |f| %>
-  <p>Name: <%= f.text_field :name %></p>
-  <p>Seats: <%= f.number_field :seats %></p>
-  <%= f.submit "Create Table" %>
-<% end %>
+<%= form_with model: (@table || Table.new), local: true do |f| %>
+  <div class="card" style="max-width: 720px;">
+    <div class="card-header">Create Table and Timeslot</div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="table_quantity">Quantity of tables</label>
+          <%= f.number_field :quantity, id: 'table_quantity', min: 1, placeholder: 'Number of tables', class: 'form-control' %>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="table_capacity">Capacity</label>
+          <%= f.number_field :capacity, id: 'table_capacity', min: 1, placeholder: 'Number of seats (capacity)', class: 'form-control' %>
+        </div>
+      </div>
 
-<%= link_to "Back", tables_path %>
+      <hr class="my-4">
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label" for="timeslot_date">Date</label>
+          <%= f.fields_for :timeslots do |ts| %>
+            <%= ts.date_field :date, id: 'timeslot_date', class: 'form-control' %>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="timeslot_start_time">Start Time</label>
+            <%= ts.time_field :start_time, id: 'timeslot_start_time', class: 'form-control' %>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="timeslot_end_time">End Time</label>
+            <%= ts.time_field :end_time, id: 'timeslot_end_time', class: 'form-control' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <%= link_to 'Back to Admin Dashboard', admin_dashboard_path, class: 'btn btn-outline-secondary' %>
+      <%= f.submit 'Create Table and Timeslot', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

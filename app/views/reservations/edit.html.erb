@@ -5,12 +5,17 @@
 <%= form_with model: @reservation, local: true do |f| %>
   <p>
     <strong>Table:</strong><br>
-    <%= f.collection_select :table_id, @tables, :id, :name %>
+  <%= f.collection_select :table_id, @tables, :id, ->(t) { "Table ##{t.id} — Number of tables: #{t.quantity}, Cap: #{t.capacity}" } %>
   </p>
 
   <p>
     <strong>Timeslot:</strong><br>
     <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')}" } %>
+  </p>
+
+  <p>
+    <strong>Status:</strong><br>
+    <%= f.select :status, Reservation.statuses.keys.map { |k| [k.humanize, k] }, {}, {} %>
   </p>
 
   <p>

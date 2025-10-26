@@ -1,101 +1,59 @@
-<div style="max-width: 1200px; margin: 0 auto;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-    <h2 style="margin: 0;">Timeslots</h2>
-    <div class="btn-group" role="group">
-      <%= link_to "Day", timeslots_path(view: 'day'), class: "btn btn-sm #{params[:view] == 'day' ? 'btn-primary' : 'btn-secondary'}" %>
-      <%= link_to "Week", timeslots_path(view: 'week'), class: "btn btn-sm #{params[:view] == 'week' ? 'btn-primary' : 'btn-secondary'}" %>
-      <%= link_to "Month", timeslots_path(view: nil), class: "btn btn-sm #{params[:view].blank? || params[:view] == 'month' ? 'btn-primary' : 'btn-secondary'}" %>
+<div style="display:flex; justify-content:center; padding:2rem 1rem;">
+  <div style="max-width:1000px; width:100%;">
+    <div style="background:#fff; padding:0.5rem; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th colspan="6" style="text-align:left; padding:10px 8px; font-size:1.1rem; border-bottom:1px solid #eee;">
+              Tables & Timeslots
+            </th>
+          </tr>
+          <tr>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid #f2f2f2;">Table</th>
+            <th style="text-align:right; padding:8px; border-bottom:1px solid #f2f2f2;">Seats</th>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid #f2f2f2;">Date</th>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid #f2f2f2;">Start</th>
+            <th style="text-align:left; padding:8px; border-bottom:1px solid #f2f2f2;">End</th>
+            <th style="text-align:center; padding:8px; border-bottom:1px solid #f2f2f2;">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @tables.each do |table| %>
+            <% table.timeslots.each do |ts| %>
+              <tr>
+                <td style="padding:8px; vertical-align:middle;"><%= table.quantity %></td>
+                <td style="padding:8px; text-align:right; vertical-align:middle;"><%= table.capacity %></td>
+                <td style="padding:8px; vertical-align:middle;"><%= ts.date.strftime('%Y-%m-%d') %></td>
+                <td style="padding:8px; vertical-align:middle;"><%= ts.start_time.strftime('%I:%M %p') %></td>
+                <td style="padding:8px; vertical-align:middle;"><%= ts.end_time.strftime('%I:%M %p') %></td>
+                <td style="padding:8px; text-align:center; vertical-align:middle;">
+                  <%= link_to 'Edit', edit_timeslot_path(ts), class: 'btn btn-sm' %> |
+                  <%= link_to 'Delete', timeslot_path(ts),
+                              class: 'btn btn-sm btn-link text-danger p-0',
+                              data: {
+                                action: 'confirm-modal#ask',
+                                turbo_method: :delete,
+                                confirm_modal_title: 'Delete Timeslot',
+                                confirm_modal_message: "Delete timeslot for table quantity #{table.quantity} (capacity #{table.capacity}) on #{ts.date}?",
+                                confirm_modal_confirm_text: 'Delete',
+                                confirm_modal_confirm_class: 'btn btn-danger'
+                              } %>
+                </td>
+              </tr>
+            <% end %>
+          <% end %>
+
+          <% if @tables.blank? %>
+            <tr><td colspan="6" style="padding:12px; text-align:center; color:#666;">No tables or timeslots found.</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <div style="display:flex; justify-content:space-between; margin-top:0.75rem;">
+        <div><%= link_to "Add Table", new_table_path, class: 'btn btn-sm btn-outline-primary' %></div>
+        <div><%= link_to "Add Timeslot", new_timeslot_path, class: 'btn btn-sm btn-primary' %></div>
+      </div>
     </div>
-  </div>
-
-  <% if params[:view] == 'day' %>
-    <%= calendar(number_of_days: 1) do |date| %>
-      <div class="day">
-        <div class="date"><strong><%= date.strftime('%A, %B %-d, %Y') %></strong></div>
-        <% timeslots = @timeslots_by_date[date] || [] %>
-        <% if timeslots.any? %>
-          <% timeslots.each do |t| %>
-            <div class="timeslot" id="<%= dom_id(t) %>">
-              <strong><%= t.start_time.strftime("%I:%M %p") %> - <%= t.end_time.strftime("%I:%M %p") %></strong>
-              <div class="actions">
-                <%= link_to "Edit", edit_timeslot_path(t), class: 'btn btn-sm' %> |
-                <%= link_to "Delete", timeslot_path(t),
-                            class: 'btn btn-sm btn-link text-danger p-0',
-                            data: {
-                              action: 'confirm-modal#ask',
-                              turbo_method: :delete,
-                              confirm_modal_title: 'Delete Timeslot',
-                              confirm_modal_message: "Delete timeslot on #{t.date} at #{t.start_time&.strftime('%I:%M %p')}?",
-                              confirm_modal_confirm_text: 'Delete',
-                              confirm_modal_confirm_class: 'btn btn-danger'
-                            } %>
-              </div>
-            </div>
-          <% end %>
-        <% else %>
-          <p class="text-muted">No timeslots for this day</p>
-        <% end %>
-      </div>
-    <% end %>
-
-  <% elsif params[:view] == 'week' %>
-    <%= week_calendar(number_of_weeks: 1) do |date| %>
-      <div class="day">
-        <div class="date"><%= date.day %></div>
-        <% timeslots = @timeslots_by_date[date] || [] %>
-        <% if timeslots.any? %>
-          <% timeslots.each do |t| %>
-            <div class="timeslot" id="<%= dom_id(t) %>">
-              <strong><%= t.start_time.strftime("%I:%M %p") %></strong>
-              <div class="actions">
-                <%= link_to "Edit", edit_timeslot_path(t), class: 'btn btn-sm' %> |
-                <%= link_to "Delete", timeslot_path(t),
-                            class: 'btn btn-sm btn-link text-danger p-0',
-                            data: {
-                              action: 'confirm-modal#ask',
-                              turbo_method: :delete,
-                              confirm_modal_title: 'Delete Timeslot',
-                              confirm_modal_message: "Delete timeslot on #{t.date} at #{t.start_time&.strftime('%I:%M %p')}?",
-                              confirm_modal_confirm_text: 'Delete',
-                              confirm_modal_confirm_class: 'btn btn-danger'
-                            } %>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    <% end %>
-
-  <% else %>
-    <%= month_calendar do |date| %>
-      <div class="day">
-        <div class="date"><%= date.day %></div>
-        <% timeslots = @timeslots_by_date[date] || [] %>
-        <% if timeslots.any? %>
-          <% timeslots.each do |t| %>
-            <div class="timeslot" id="<%= dom_id(t) %>">
-              <strong><%= t.start_time.strftime("%I:%M %p") %></strong>
-              <div class="actions">
-                <%= link_to "Edit", edit_timeslot_path(t), class: 'btn btn-sm' %> |
-                <%= link_to "Delete", timeslot_path(t),
-                            class: 'btn btn-sm btn-link text-danger p-0',
-                            data: {
-                              action: 'confirm-modal#ask',
-                              turbo_method: :delete,
-                              confirm_modal_title: 'Delete Timeslot',
-                              confirm_modal_message: "Delete timeslot on #{t.date} at #{t.start_time&.strftime('%I:%M %p')}?",
-                              confirm_modal_confirm_text: 'Delete',
-                              confirm_modal_confirm_class: 'btn btn-danger'
-                            } %>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    <% end %>
-  <% end %>
-
-  <div style="margin-top: 1rem;">
-    <%= link_to "Add Timeslot", new_timeslot_path, class: 'btn btn-primary' %>
   </div>
 </div>

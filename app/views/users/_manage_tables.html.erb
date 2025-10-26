@@ -14,8 +14,8 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Seats</th>
+            <th>Quantity</th>
+            <th>Capacity</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -23,8 +23,8 @@
           <% tables.order(:id).each do |t| %>
             <tr id="<%= dom_id(t) %>">
               <td><%= t.id %></td>
-              <td><%= t.name %></td>
-              <td><%= t.seats %></td>
+              <td><%= t.quantity %></td>
+              <td><%= t.capacity %></td>
               <td>
                 <%= link_to 'Edit', edit_table_path(t), class: 'btn btn-sm btn-outline-primary' %>
                 <%= link_to 'Delete', table_path(t),
@@ -33,7 +33,7 @@
                             data: {
                               action: 'confirm-modal#ask',
                               confirm_modal_title: 'Delete Table',
-                              confirm_modal_message: "Delete table #{t.name}?",
+                              confirm_modal_message: "Delete table with quantity #{t.quantity} and capacity #{t.capacity}?",
                               confirm_modal_confirm_text: 'Delete',
                               confirm_modal_confirm_class: 'btn btn-danger'
                             } %>

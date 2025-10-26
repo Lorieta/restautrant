@@ -5,10 +5,10 @@
       <p class="lead">Welcome, <%= current_user.name %>!</p>
     
       <div class="admin-summary mt-4">
-        <%= render 'admin_card', title: 'Total Users', count: @users.count, collapse_target: 'manage-users', button_text: 'Manage Users' %>
-        <%= render 'admin_card', title: 'Total Reservations', count: @reservations.count, collapse_target: 'manage-reservations', button_text: 'Manage Reservations' %>
-        <%= render 'admin_card', title: 'Total Tables', count: @tables.count, collapse_target: 'manage-tables', button_text: 'Manage Tables' %>
-        <%= render 'admin_card', title: 'Total Timeslots', count: @timeslots.count, collapse_target: 'manage-timeslots', button_text: 'Manage Timeslots' %>
+        <%= render 'admin_card', title: 'Total Users', count: @users.count %>
+        <%= render 'admin_card', title: 'Total Reservations', count: @reservations.count %>
+        <%= render 'admin_card', title: 'Total Tables', count: @tables.count  %>
+        <%= render 'admin_card', title: 'Total Timeslots', count: @timeslots.count%>
       </div>
 
       <div class="admin-reservations mt-4" data-controller="reservation-view" data-reservation-view-list-label-value="List" data-reservation-view-calendar-label-value="Calendar">
@@ -37,12 +37,9 @@
                   <div class="day">
                     <div class="date"><%= date.day %></div>
                     <% reservations = @reservations_by_date[date] || [] %>
-                    <% if reservations.any? %>
+                      <% if reservations.any? %>
                       <% reservations.each do |res| %>
-                        <div class="reservation-item">
-                          <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
-                          <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
-                        </div>
+                        <%= render partial: 'reservations/calendar_item', locals: { reservation: res } %>
                       <% end %>
                     <% else %>
                       <div class="text-muted" style="font-size: 0.8rem;">No reservations</div>
@@ -54,12 +51,9 @@
                   <div class="day">
                     <div class="date"><%= date.day %></div>
                     <% reservations = @reservations_by_date[date] || [] %>
-                    <% if reservations.any? %>
+                      <% if reservations.any? %>
                       <% reservations.each do |res| %>
-                        <div class="reservation-item">
-                          <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
-                          <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
-                        </div>
+                        <%= render partial: 'reservations/calendar_item', locals: { reservation: res } %>
                       <% end %>
                     <% else %>
                       <div class="text-muted" style="font-size: 0.8rem;">No reservations</div>
@@ -71,12 +65,9 @@
                   <div class="day">
                     <div class="date"><%= date.day %></div>
                     <% reservations = @reservations_by_date[date] || [] %>
-                    <% if reservations.any? %>
+                      <% if reservations.any? %>
                       <% reservations.each do |res| %>
-                        <div class="reservation-item">
-                          <strong><%= res.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
-                          <%= link_to res.user.name, user_path(res.user) %> - <%= res.table.name %> (<%= res.num_people %>)
-                        </div>
+                        <%= render partial: 'reservations/calendar_item', locals: { reservation: res } %>
                       <% end %>
                     <% else %>
                       <div class="text-muted" style="font-size: 0.8rem;">No reservations</div>
@@ -88,6 +79,9 @@
           </div>
 
           <div class="admin-reservations-list" data-reservation-view-target="list" hidden>
+            <div class="d-flex justify-content-end mb-2">
+              <%= link_to 'Add Reservation', new_reservation_path, class: 'btn btn-sm btn-primary' %>
+            </div>
             <% if @reservations.any? %>
               <table class="table table-striped">
                 <thead>
@@ -95,21 +89,16 @@
                     <th>ID</th>
                     <th>User</th>
                     <th>Table</th>
+                    <th>Status</th>
                     <th>Timeslot</th>
                     <th>People</th>
                     <th>Created At</th>
+                    <th class="text-end">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <% @reservations.order(created_at: :desc).limit(10).each do |reservation| %>
-                    <tr>
-                      <td><%= reservation.id %></td>
-                      <td><%= reservation.user.name %></td>
-                      <td><%= reservation.table.name %></td>
-                      <td><%= reservation.timeslot.date %> <%= reservation.timeslot.start_time.strftime('%H:%M') if reservation.timeslot.start_time %></td>
-                      <td><%= reservation.num_people %></td>
-                      <td><%= reservation.created_at.strftime('%Y-%m-%d %H:%M') %></td>
-                    </tr>
+                    <%= render partial: 'reservations/admin_row', locals: { reservation: reservation } %>
                   <% end %>
                 </tbody>
               </table>
@@ -127,9 +116,7 @@
         </div>
         <div class="admin-manage-content" id="manage-resources-content" data-collapsible-target="content">
           <%= render 'manage_users', users: (@users || []) %>
-          <%= render 'manage_reservations', reservations: (@reservations || []) %>
-          <%= render 'manage_tables', tables: (@tables || []) %>
-          <%= render 'manage_timeslots', timeslots: (@timeslots || []) %>
+          <%= render 'manage_inventory' %>
         </div>
       </div>
     </div>

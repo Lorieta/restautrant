@@ -10,7 +10,7 @@
 
   <% @reservations.each do |r| %>
     <tr id="<%= dom_id(r) %>">
-      <td><%= r.table.name %></td>
+  <td><%= r.table.quantity %></td>
       <td><%= "#{r.timeslot.date} - #{r.timeslot.start_time.strftime('%I:%M %p')}" %></td>
       <td><%= r.num_people %></td>
       <td>

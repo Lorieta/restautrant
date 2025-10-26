@@ -13,6 +13,8 @@ class TimeslotsController < ApplicationController
     @timeslots = Timeslot.where(date: range).order(:date, :start_time)
     # Pre-group timeslots by date for reliable rendering in the calendar view
     @timeslots_by_date = @timeslots.group_by(&:date)
+    # Ensure the tables list is available for the top section of the view
+    @tables = Table.all.order(:name)
   end
 
   def new
@@ -56,6 +58,6 @@ class TimeslotsController < ApplicationController
   end
 
   def timeslot_params
-    params.require(:timeslot).permit(:date, :start_time, :end_time)
+    params.require(:timeslot).permit(:date, :start_time, :end_time, :table_id)
   end
 end

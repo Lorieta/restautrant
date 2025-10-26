@@ -1,0 +1,67 @@
+<div class="admin-manage-section mt-3" id="manage-inventory" data-controller="collapsible" data-collapsible-expanded-value="true">
+  <div class="admin-manage-section-header d-flex justify-content-between align-items-center">
+    <h3 class="mb-0">Tables & Timeslots</h3>
+    <div>
+      <%= link_to 'New Table', new_table_path, class: 'btn btn-sm btn-primary me-2' %>
+    </div>
+  </div>
+
+  <div class="admin-manage-section-body" id="manage-inventory-content" data-collapsible-target="content">
+    <% if @tables.present? %>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Table Number</th>
+              <th>Number of tables</th>
+              <th>Seats</th>
+              <th>Upcoming Timeslots</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @tables.order(:id).each do |t| %>
+              <tr id="<%= dom_id(t) %>">
+                <td>Table #<%= t.id %></td>
+                <td><%= t.quantity %></td>
+                <td><%= t.capacity %></td>
+                <td>
+                  <% related_slots = @timeslots.select { |ts| ts.table_id == t.id } if defined?(@timeslots) && @timeslots %>
+                  <% related_slots ||= t.respond_to?(:timeslots) ? t.timeslots : [] %>
+                  <% window_start = Date.current %>
+                  <% window_end = window_start + 30.days %>
+                  <% upcoming = related_slots.select { |ts| ts.date && ts.date >= window_start && ts.date <= window_end }.sort_by { |ts| [ts.date, ts.start_time || Time.at(0)] } %>
+
+                  <% if upcoming.any? %>
+                    <ul class="mb-0 small">
+                      <% upcoming.first(5).each do |ts| %>
+                        <li id="<%= dom_id(ts) %>">
+                          <strong><%= ts.date %></strong>
+                          <span class="text-muted">
+                            (<%= ts.start_time.strftime('%H:%M') rescue '' %> - <%= ts.end_time.strftime('%H:%M') rescue '' %>)
+                          </span>
+                          
+                        </li>
+                      <% end %>
+                    </ul>
+                    <% if upcoming.size > 5 %>
+                      <span class="badge bg-secondary">+ <%= upcoming.size - 5 %> more</span>
+                    <% end %>
+                  <% else %>
+                    <span class="text-muted">No upcoming timeslots</span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to 'Edit Table', edit_table_path(t), class: 'btn btn-sm btn-outline-primary' %>
+                  <%= link_to 'Delete Table', table_path(t), method: :delete, class: 'btn btn-sm btn-outline-danger', data: { action: 'confirm-modal#ask', confirm_modal_title: 'Delete Table', confirm_modal_message: "Delete table ##{t.id} (Number of tables: #{t.quantity}, Cap: #{t.capacity})?", confirm_modal_confirm_text: 'Delete', confirm_modal_confirm_class: 'btn btn-danger' } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p>No tables found.</p>
+    <% end %>
+  </div>
+</div>

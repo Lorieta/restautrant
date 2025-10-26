@@ -2,17 +2,17 @@
 
 <table border="1">
     <tr>
-        <th>Name</th>
-        <th>Seats</th>
+    <th>Quantity</th>
+    <th>Capacity</th>
         <th>Actions</th>
     </tr>
     <% @tables.each do |t| %>
         <tr id="<%= dom_id(t) %>">
             <td>
-                <%= t.name %>
+                <%= t.quantity %>
             </td>
             <td>
-                <%= t.seats %>
+                <%= t.capacity %>
             </td>
             <td>
                 <%= link_to "Edit" , edit_table_path(t) %> |
@@ -22,7 +22,7 @@
                               action: 'confirm-modal#ask',
                               turbo_method: :delete,
                               confirm_modal_title: 'Delete Table',
-                              confirm_modal_message: "Delete table #{t.name}?",
+                              confirm_modal_message: "Delete table with quantity #{t.quantity} and capacity #{t.capacity}?",
                               confirm_modal_confirm_text: 'Delete',
                               confirm_modal_confirm_class: 'btn btn-danger'
                             } %>
@@ -32,3 +32,4 @@
 </table>
 
 <%= link_to "Add New Table" , new_table_path %>
+

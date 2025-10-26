@@ -34,7 +34,16 @@ class ReservationsController < ApplicationController
 
   def update
     if @reservation.update(reservation_params)
-      redirect_to @reservation, notice: "Reservation updated successfully!", status: :see_other
+      respond_to do |format|
+        format.turbo_stream do
+          streams = []
+          streams << turbo_stream.replace(dom_id(@reservation), partial: 'reservations/admin_row', locals: { reservation: @reservation })
+          # Replace the calendar item (if present) so calendar view updates in-place. Calendar item id is "#{dom_id}-calendar".
+          streams << turbo_stream.replace("#{dom_id(@reservation)}-calendar", partial: 'reservations/calendar_item', locals: { reservation: @reservation })
+          render turbo_stream: streams
+        end
+        format.html { redirect_to @reservation, notice: "Reservation updated successfully!", status: :see_other }
+      end
     else
       @tables = Table.all
       @timeslots = Timeslot.all
@@ -80,7 +89,7 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:table_id, :timeslot_id, :num_people)
+    params.require(:reservation).permit(:table_id, :timeslot_id, :num_people, :status)
   end
 
   def prepare_form_dependencies(selected_timeslot_id: nil)

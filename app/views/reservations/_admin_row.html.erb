@@ -1,0 +1,20 @@
+<tr id="<%= dom_id(reservation) %>" class="reservation-row reservation-status-<%= reservation.status %>">
+  <td><%= reservation.id %></td>
+  <td><%= reservation.user.name %></td>
+  <td><%= reservation.table.quantity %> (Cap: <%= reservation.table.capacity %>)</td>
+  <td class="status-cell">
+    <%= form_with model: reservation, url: reservation_path(reservation), method: :patch, local: false do |f| %>
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <%= f.select :status, Reservation.statuses.keys.map { |k| [k.humanize, k] }, {}, class: 'form-select form-select-sm', data: { controller: 'status', action: 'change->status#submit' } %>
+        <span class="status-pill reservation-status-<%= reservation.status %>"><%= reservation.status.humanize %></span>
+      </div>
+    <% end %>
+  </td>
+  <td><%= reservation.timeslot.date %> <%= reservation.timeslot.start_time.strftime('%H:%M') if reservation.timeslot.start_time %></td>
+  <td><%= reservation.num_people %></td>
+  <td><%= reservation.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+  <td class="text-end">
+    <%= link_to 'Edit', edit_reservation_path(reservation), class: 'btn btn-sm btn-outline-primary me-1' %>
+    <%= link_to 'Delete', reservation_path(reservation), method: :delete, class: 'btn btn-sm btn-outline-danger', data: { action: 'confirm-modal#ask', confirm_modal_title: 'Delete Reservation', confirm_modal_message: "Delete reservation ##{reservation.id}?", confirm_modal_confirm_text: 'Delete', confirm_modal_confirm_class: 'btn btn-danger' } %>
+  </td>
+</tr>

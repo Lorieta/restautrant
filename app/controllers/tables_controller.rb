@@ -9,12 +9,14 @@ class TablesController < ApplicationController
 
   def new
     @table = Table.new
+    @table.timeslots.build
   end
 
   def create
     @table = Table.new(table_params)
+
     if @table.save
-      redirect_to tables_path, notice: "Table created successfully."
+      redirect_to tables_path, notice: "Table and Timeslot created successfully."
     else
       render :new
     end
@@ -48,6 +50,6 @@ class TablesController < ApplicationController
   end
 
   def table_params
-    params.require(:table).permit(:name, :seats)
+    params.require(:table).permit(:quantity, :capacity, timeslots_attributes: [:id, :date, :start_time, :end_time, :_destroy])
   end
 end

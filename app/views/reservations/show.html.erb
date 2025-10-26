@@ -20,11 +20,22 @@
   </p>
 
   <p>
-    <strong>Table:</strong>
-    <%= @reservation.table&.name || 'Unassigned' %>
-    <% if @reservation.table&.seats %>
-      (Seats: <%= @reservation.table.seats %>)
+    <strong>Table quantity:</strong>
+    <%= @reservation.table&.quantity || 'Unassigned' %>
+    <% if @reservation.table&.capacity %>
+      (Capacity: <%= @reservation.table.capacity %>)
     <% end %>
+  </p>
+
+  <p>
+    <strong>Status:</strong>
+    <% status_class = case @reservation.status
+      when 'pending' then 'bg-warning text-dark'
+      when 'cancelled' then 'bg-danger'
+      when 'confirmed', 'completed' then 'bg-success'
+      else 'bg-secondary'
+    end %>
+    <span class="badge <%= status_class %>"><%= @reservation.status.to_s.humanize %></span>
   </p>
 
   <p>

@@ -29,7 +29,11 @@
         <ul class="list-group">
           <% @user.reservations.order(created_at: :desc).each do |r| %>
             <li class="list-group-item">
-              <strong>Reservation for <%= r.table&.name || 'Table' %></strong>
+              <strong>Reservation for <%= if r.table
+                                              "Table ##{r.table.id} — Number of tables: #{r.table.quantity} (Cap: #{r.table.capacity})"
+                                            else
+                                              'Table'
+                                            end %></strong>
               <div>
                 <% if r.timeslot %>
                   <%= r.timeslot.date.strftime('%B %-d, %Y') %>

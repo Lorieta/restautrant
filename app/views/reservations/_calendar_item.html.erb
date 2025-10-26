@@ -1,0 +1,15 @@
+<div id="<%= dom_id(reservation) %>-calendar" class="reservation-item reservation-status-<%= reservation.status %>" title="Status: <%= reservation.status.humanize %>">
+  <div class="reservation-left">
+    <strong><%= reservation.timeslot.start_time.strftime('%I:%M %p') rescue '' %></strong>
+  </div>
+  <div class="reservation-right">
+    <%= form_with model: reservation, url: reservation_path(reservation), method: :patch, local: false do |f| %>
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <%= f.select :status, Reservation.statuses.keys.map { |k| [k.humanize, k] }, {}, class: 'form-select form-select-sm', data: { controller: 'status', action: 'change->status#submit' } %>
+        <div style="margin-left:6px;">
+          <%= link_to reservation.user.name, user_path(reservation.user) %> - Table #<%= reservation.table.id %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

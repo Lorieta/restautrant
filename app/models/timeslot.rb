@@ -1,23 +1,29 @@
 class Timeslot < ApplicationRecord
+  # Allow a nullable table association for now so existing records don't fail validation.
+  belongs_to :table, optional: true
   has_many :reservations, dependent: :destroy
 
-  validates :date, :start_time, :end_time, presence: true
+  validates :date, :start_time, presence: true
   validate :end_after_start
 
   private
 
   def end_after_start
-    return if end_time.blank? || start_time.blank?
+    return if start_time.blank?
 
     opening_seconds = 7.hours.to_i
     closing_seconds = 22.hours.to_i
 
     start_seconds = start_time.seconds_since_midnight.to_i
-    end_seconds = end_time.seconds_since_midnight.to_i
 
     if start_seconds < opening_seconds || start_seconds > closing_seconds
       errors.add(:start_time, "must be between 07:00 and 22:00")
     end
+
+    # If end_time is blank, skip end-related checks (allow nil end time)
+    return if end_time.blank?
+
+    end_seconds = end_time.seconds_since_midnight.to_i
 
     if end_seconds < opening_seconds || end_seconds > closing_seconds
       errors.add(:end_time, "must be between 07:00 and 22:00")

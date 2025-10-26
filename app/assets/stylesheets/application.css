@@ -502,6 +502,49 @@ header {
     margin-left: 8px;
 }
 
+/* Reservation status color-coding on calendar items */
+.reservation-item {
+    border-left: 6px solid transparent;
+}
+
+.reservation-status-pending {
+    /* amber / yellow */
+    border-left-color: #f59e0b;
+    /* amber-500 */
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.06), rgba(248, 250, 252, 0.02));
+}
+
+.reservation-status-confirmed {
+    /* green */
+    border-left-color: #10b981;
+    /* emerald-500 */
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.06), rgba(248, 250, 252, 0.02));
+}
+
+.reservation-status-cancelled {
+    /* red */
+    border-left-color: #ef4444;
+    /* red-500 */
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.06), rgba(248, 250, 252, 0.02));
+}
+
+.reservation-status-completed {
+    /* blue */
+    border-left-color: #3b82f6;
+    /* blue-500 */
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.06), rgba(248, 250, 252, 0.02));
+}
+
+.reservation-left {
+    margin-right: 8px;
+    min-width: 72px;
+}
+
+.reservation-right {
+    flex: 1 1 auto;
+    text-align: left;
+}
+
 .today {
     background: #eef2ff !important;
 }
@@ -533,4 +576,46 @@ header {
 /* Forms */
 form p {
     margin-bottom: 0.75rem;
+}
+
+/* Status pill and table-row status coloring */
+.status-pill {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: #fff;
+}
+
+.status-pill.reservation-status-pending {
+    background: #f59e0b;
+}
+
+.status-pill.reservation-status-confirmed {
+    background: #10b981;
+}
+
+.status-pill.reservation-status-cancelled {
+    background: #ef4444;
+}
+
+.status-pill.reservation-status-completed {
+    background: #3b82f6;
+}
+
+/* Slight row background tint to match status for better visibility */
+.reservation-row.reservation-status-pending td {
+    background: rgba(245, 158, 11, 0.03);
+}
+
+.reservation-row.reservation-status-confirmed td {
+    background: rgba(16, 185, 129, 0.03);
+}
+
+.reservation-row.reservation-status-cancelled td {
+    background: rgba(239, 68, 68, 0.03);
+}
+
+.reservation-row.reservation-status-completed td {
+    background: rgba(59, 130, 246, 0.03);
 }
