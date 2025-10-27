@@ -3,10 +3,25 @@
     <div class="row">
       <div class="col-md-8 mx-auto">
         <div class="card">
-          <div class="card-body">
+          <div class="card-body" data-controller="timeslot-selector">
             <h2 class="card-title">New Reservation</h2>
 
             <%= render "shared/error_messages", object: @reservation %>
+
+            <%# Show current user's contact info (read-only snapshot) %>
+            <section class="mb-3 contact-info">
+              <h5 class="mb-2">Contact details</h5>
+              <dl class="row reservation-summary">
+                <dt class="col-sm-3 text-muted">Name</dt>
+                <dd class="col-sm-9"><span class="fw-bold"><%= current_user.name %></span></dd>
+
+                <dt class="col-sm-3 text-muted">Phone</dt>
+                <dd class="col-sm-9"><span class="text-muted"><%= current_user.phone.presence || 'N/A' %></span></dd>
+
+                <dt class="col-sm-3 text-muted">Email</dt>
+                <dd class="col-sm-9"><span class="text-muted"><%= current_user.email %></span></dd>
+              </dl>
+            </section>
 
             <% if @selected_timeslot %>
               <% available_tables = available_tables_count(@selected_timeslot) %>
@@ -27,12 +42,12 @@
 
               <p>
                 <strong>Table:</strong><br>
-                <%= f.collection_select :table_id, @tables, :id, ->(t) { "Table ##{t.id} — Tables: #{t.quantity}, Capacity: #{t.capacity}" }, { prompt: "Select a Table", selected: params[:table_id] }, { id: 'reservation_table_id' } %>
+                <%= f.collection_select :table_id, @tables, :id, ->(t) { "Table ##{t.id} — Tables: #{t.quantity}, Capacity: #{t.capacity}" }, { prompt: "Select a Table", selected: params[:table_id] }, { id: 'reservation_table_id', data: { "timeslot-selector-target": "tableSelect" } } %>
               </p>
               <p>
                 <strong>Timeslot:</strong><br>
                 <% prompt_text = @selected_timeslot ? "Change the selected timeslot" : "Select a Timeslot" %>
-                <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')}#{t.end_time ? " – #{t.end_time.strftime('%I:%M %p')}" : ' – Open-ended'}" }, { prompt: prompt_text, selected: @selected_timeslot&.id }, { id: 'reservation_timeslot_id' } %>
+                <%= f.collection_select :timeslot_id, @timeslots, :id, ->(t) { "#{t.date} - #{t.start_time.strftime('%I:%M %p')}#{t.end_time ? " – #{t.end_time.strftime('%I:%M %p')}" : ' – Open-ended'}" }, { prompt: prompt_text, selected: @selected_timeslot&.id }, { id: 'reservation_timeslot_id', data: { "timeslot-selector-target": "timeslotSelect" } } %>
               </p>
 
               <p>
@@ -40,11 +55,19 @@
                 <%= f.number_field :num_people, min: 1 %>
               </p>
 
-              <p><%= f.submit "Create Reservation", class: 'btn btn-primary' %></p>
+              <p>
+                <%# Primary action is to review details on a confirmation page before final submission %>
+                <%= button_tag "Review details", type: 'submit', formaction: confirm_reservations_path, formmethod: 'post', class: 'btn btn-primary' %>
+              </p>
             <% end %>
           </div>
           <div class="card-footer text-center">
-            <%= link_to "Back", admin_dashboard_path, class: 'btn btn-primary' %>
+            <%# Regular users go to the site root; admins go to the admin dashboard %>
+            <% if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>
+              <%= link_to "Back", admin_dashboard_path, class: 'btn btn-primary' %>
+            <% else %>
+              <%= link_to "Back", root_path, class: 'btn btn-primary' %>
+            <% end %>
           </div>
         </div>
       </div>
@@ -76,7 +99,7 @@
             <tbody>
               <% slots.each do |slot| %>
                 <% available_tables = available_tables_count(slot) %>
-                <tr class="<%= 'table-active' if @selected_timeslot&.id == slot.id %>">
+                <tr class="<%= 'table-active' if @selected_timeslot&.id == slot.id %>" data-timeslot-selector-target="availabilityRow" data-timeslot-id="<%= slot.id %>">
                   <td>
                     <strong><%= slot.start_time&.strftime('%I:%M %p') %></strong>
                     &ndash;

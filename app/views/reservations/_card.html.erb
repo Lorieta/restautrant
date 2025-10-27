@@ -29,7 +29,15 @@ end %>">
     <div class="reservation-card-actions">
       <%= link_to 'View', reservation_path(reservation), class: 'btn btn-sm btn-outline-secondary me-2' if defined?(reservation_path) %>
       <% if current_user == user && cancellable?(reservation) %>
-        <%= button_to 'Cancel', cancel_reservation_path(reservation), method: :patch, data: { confirm: 'Cancel this reservation?' }, form: { class: 'inline-button' }, class: 'btn btn-sm btn-danger' %>
+        <%= button_to 'Cancel', cancel_reservation_path(reservation), method: :patch,
+            data: {
+              action: 'confirm-modal#ask',
+              confirm_modal_title: 'Cancel Reservation',
+              confirm_modal_message: 'Cancel this reservation?',
+              confirm_modal_confirm_text: 'Yes',
+              confirm_modal_confirm_class: 'btn btn-danger'
+            },
+            form: { class: 'inline-button' }, class: 'btn btn-sm btn-danger' %>
       <% end %>
     </div>
   </div>

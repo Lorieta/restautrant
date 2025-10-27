@@ -920,3 +920,100 @@ form p {
 .reservation-row.reservation-status-completed td {
     background: rgba(59, 130, 246, 0.03);
 }
+
+/* Availability table (home page) */
+.availability {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.availability-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.availability-table thead th {
+    background: #f1f5f9;
+    color: #111827;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+}
+
+.availability-table td {
+    vertical-align: top;
+    padding: 8px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    min-width: 110px;
+}
+
+.availability-cell ul {
+    margin: 0;
+    padding-left: 1.05rem;
+}
+
+.availability-cell li {
+    list-style: disc;
+    margin-bottom: 0.25rem;
+    color: #374151;
+}
+
+.availability-cell .text-muted {
+    color: #6b7280;
+}
+
+/* Highlight when there are no tables in a slot to make it subtle */
+.availability-cell span.text-muted {
+    display: inline-block;
+    padding: 4px 6px;
+    border-radius: 6px;
+    background: #fbfdff;
+}
+
+/* Reservation contact/summary formatting */
+.contact-info h5 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.reservation-summary dt {
+    font-size: 0.9rem;
+    color: #6b7280;
+    /* muted */
+}
+
+.reservation-summary dd {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: #111827;
+}
+
+.reservation-summary .fw-bold {
+    font-weight: 600;
+}
+
+
+/* Responsive: allow horizontal scroll on small screens */
+@media (max-width: 768px) {
+    .availability-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .availability-table thead,
+    .availability-table tbody,
+    .availability-table th,
+    .availability-table td,
+    .availability-table tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+}

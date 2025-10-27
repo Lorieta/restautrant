@@ -15,6 +15,33 @@ class ReservationsController < ApplicationController
     prepare_form_dependencies(selected_timeslot_id: params[:timeslot_id])
   end
 
+  # POST/GET /reservations/confirm
+  # For POST: redirect (303) to the GET confirm with reservation params in the query string.
+  # This ensures Turbo receives a redirect response for a non-GET form submission.
+  # For GET: build a non-persisted reservation from params and render the confirmation page.
+  def confirm
+    if request.post?
+      # Redirect to GET with params so Turbo sees a redirect (see_other)
+      redirect_to confirm_reservations_path(reservation: reservation_params.to_h), status: :see_other
+      return
+    end
+
+    # GET /reservations/confirm — build the preview reservation
+    if params[:reservation].present?
+      @reservation = current_user.reservations.build(reservation_params)
+      prepare_form_dependencies(selected_timeslot_id: @reservation.timeslot_id)
+
+      if @reservation.invalid?
+        # Show the form with validation errors
+        render :new, status: :unprocessable_entity
+      else
+        render :confirm
+      end
+    else
+      redirect_to new_reservation_path, alert: "No reservation data provided for confirmation."
+    end
+  end
+
   def create
     @reservation = current_user.reservations.build(reservation_params)
 
@@ -169,5 +196,29 @@ class ReservationsController < ApplicationController
     else
       @tables = Table.all
     end
+  end
+
+  public
+
+  # GET /reservations/timeslots_for_table?table_id=123
+  # Returns JSON list of upcoming timeslots that are appropriate for the
+  # provided table and not already reserved for that table.
+  def timeslots_for_table
+    table = Table.find_by(id: params[:table_id])
+
+    timeslots = if table
+      Timeslot.where("date >= ?", Date.current)
+              .where("table_id IS NULL OR table_id = ?", table.id)
+              .where.not(id: Reservation.where(table_id: table.id).select(:timeslot_id))
+              .order(:date, :start_time)
+    else
+      Timeslot.none
+    end
+
+    render json: timeslots.map { |ts|
+      label = "#{ts.date} - #{ts.start_time.strftime('%I:%M %p')}"
+      label += ts.end_time ? " – #{ts.end_time.strftime('%I:%M %p')}" : " – Open-ended"
+      { id: ts.id, date: ts.date, label: label }
+    }
   end
 end

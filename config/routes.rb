@@ -15,6 +15,11 @@ Rails.application.routes.draw do
   # Root should point to UsersController#home (plural controller name)
   resources :users
   resources :reservations do
+    collection do
+      post :confirm
+      get  :confirm
+      get  :timeslots_for_table
+    end
     member do
       patch :cancel
       get :cancel

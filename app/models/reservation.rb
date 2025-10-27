@@ -12,6 +12,7 @@ class Reservation < ApplicationRecord
   validate :table_capacity_check
   validate :two_hours_before_rule
   validate :table_availability
+  validate :single_reservation_per_user_per_timeslot
 
   private
 
@@ -49,6 +50,23 @@ class Reservation < ApplicationRecord
     conflict = conflict.where.not(id: id) if persisted?
     if conflict.exists?
       errors.add(:table, "is already booked for that timeslot")
+    end
+  end
+
+  # Prevent a user from creating more than one reservation for the same timeslot.
+  # This is intentionally strict: even if the table capacity or other slots
+  # would allow another booking, a user may not hold multiple bookings for the
+  # same timeslot. Cancelled reservations are ignored.
+  def single_reservation_per_user_per_timeslot
+    return unless user && timeslot
+
+    conflict = Reservation.where(user_id: user.id, timeslot_id: timeslot.id)
+    conflict = conflict.where.not(id: id) if persisted?
+    # Exclude cancelled reservations from blocking (allow rebooking after cancel)
+    conflict = conflict.where.not(status: Reservation.statuses[:cancelled])
+
+    if conflict.exists?
+      errors.add(:base, "You already have a reservation for this timeslot")
     end
   end
 end

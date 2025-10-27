@@ -14,13 +14,21 @@ class ApplicationController < ActionController::Base
 
     return unless logged_in?
 
+    # Build the visible month and range for the calendar
+    @month = @start_date.beginning_of_month
     visible_range = @start_date.beginning_of_month.beginning_of_week..@start_date.end_of_month.end_of_week
-  @user_reservations = current_user.reservations
-                   .joins(:timeslot)
-                   .where(timeslots: { date: visible_range })
-                   .includes(:timeslot, :table)
-                   .order("timeslots.date ASC, timeslots.start_time ASC")
+
+    # Load user's reservations that fall in the visible calendar range
+    @user_reservations = current_user.reservations
+                         .joins(:timeslot)
+                         .where(timeslots: { date: visible_range })
+                         .includes(:timeslot, :table)
+                         .order("timeslots.date ASC, timeslots.start_time ASC")
     @reservations_by_date = @user_reservations.group_by { |reservation| reservation.timeslot&.date }
+
+    # Also load all timeslots shown on the calendar so we can display them
+    @timeslots = Timeslot.where(date: visible_range).order(:date, :start_time)
+    @timeslots_by_date = @timeslots.group_by(&:date)
   end
 
   private

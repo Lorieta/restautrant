@@ -17,7 +17,14 @@
       <td><%= u.role %></td>
       <td>
         <%= link_to "Edit", edit_user_path(u) %> |
-        <%= button_to "Delete", user_path(u), method: :delete, data: { confirm: "Are you sure?" } %>
+        <%= button_to "Delete", user_path(u), method: :delete,
+            data: {
+              action: 'confirm-modal#ask',
+              confirm_modal_title: 'Delete User',
+              confirm_modal_message: 'Are you sure?',
+              confirm_modal_confirm_text: 'Delete',
+              confirm_modal_confirm_class: 'btn btn-danger'
+            } %>
       </td>
     </tr>
   <% end %>
