@@ -24,7 +24,7 @@
 
       <ul class="navbar-nav ms-auto">
         <% if logged_in? %>
-          <li class="nav-item"><%= button_to "Logout", logout_path, method: :delete, form: { class: 'd-inline' }, class: "nav-link btn btn-link p-0" %></li>
+          <li class="nav-item"><%= button_to "Logout", logout_path, method: :delete, form: { class: 'd-inline' }, class: "btn btn-sm btn-primary d-inline-block" %></li>
         
         <% end %>
       </ul>

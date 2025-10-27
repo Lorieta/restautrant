@@ -43,8 +43,8 @@
 
             <p class="mt-3">Please review your reservation details. Click Confirm to submit your booking or Edit to return to the form.</p>
 
-            <div class="d-flex gap-2">
-              <%= form_with url: reservations_path, method: :post, local: true do |f| %>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+              <%= form_with url: reservations_path, method: :post, local: true, html: { class: 'm-0 d-inline-block' } do |f| %>
                 <%= hidden_field_tag "reservation[table_id]", @reservation.table_id %>
                 <%= hidden_field_tag "reservation[timeslot_id]", @reservation.timeslot_id %>
                 <%= hidden_field_tag "reservation[num_people]", @reservation.num_people %>
@@ -59,7 +59,7 @@
               <% if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>
                 <%= link_to "Back to Admin", admin_dashboard_path, class: 'btn btn-link text-muted' %>
               <% else %>
-                <%= link_to "Back to Home", root_path, class: 'btn btn-link text-muted' %>
+                <%= link_to "Back to Home", root_path, class: 'btn btn-primary' %>
               <% end %>
             </div>
 
