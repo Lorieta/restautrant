@@ -9,21 +9,21 @@
             <%= render "shared/error_messages", object: @reservation %>
 
             <%# Contact details: will update when a different user is selected (via Stimulus) %>
-            <% if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>
-              <section class="mb-3 contact-info" data-user-selector-target="wrapper" data-users='<%= (@users || [current_user]).map { |u| { id: u.id, name: u.name, phone: u.phone, email: u.email } }.to_json %>'>
+              <% if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>
+              <section class="mb-3 contact-info" data-user-selector-target="wrapper" data-users='<%= raw((@users || [current_user]).map { |u| { id: u.id, name: u.name, phone: u.phone, email: u.email } }.to_json) %>'>
             <% else %>
               <section class="mb-3 contact-info">
             <% end %>
               <h5 class="mb-2">Contact details</h5>
               <dl class="row reservation-summary">
                 <dt class="col-sm-3 text-muted">Name</dt>
-                <dd class="col-sm-9"><span class="fw-bold" <%= 'data-user-selector-target="name"' if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>><%= current_user.name %></span></dd>
+                <dd class="col-sm-9" data-user-selector-target="name"><span class="fw-bold"><%= current_user.name %></span></dd>
 
                 <dt class="col-sm-3 text-muted">Phone</dt>
-                <dd class="col-sm-9"><span class="text-muted" <%= 'data-user-selector-target="phone"' if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>><%= current_user.phone.presence || 'N/A' %></span></dd>
+                <dd class="col-sm-9" data-user-selector-target="phone"><span class="text-muted"><%= current_user.phone.presence || 'N/A' %></span></dd>
 
                 <dt class="col-sm-3 text-muted">Email</dt>
-                <dd class="col-sm-9"><span class="text-muted" <%= 'data-user-selector-target="email"' if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>><%= current_user.email %></span></dd>
+                <dd class="col-sm-9" data-user-selector-target="email"><span class="text-muted"><%= current_user.email %></span></dd>
               </dl>
             </section>
 

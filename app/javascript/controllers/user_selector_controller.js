@@ -49,9 +49,13 @@ export default class extends Controller {
         const name = user && user.name ? user.name : ''
         const phone = user && user.phone ? user.phone : ''
         const email = user && user.email ? user.email : ''
+        // Prefer Stimulus targets when available, but fall back to querying inside the wrapper
+        let nameEl = this.hasNameTarget ? this.nameTarget : (this.hasWrapperTarget ? this.wrapperTarget.querySelector('[data-user-selector-target="name"]') : null)
+        let phoneEl = this.hasPhoneTarget ? this.phoneTarget : (this.hasWrapperTarget ? this.wrapperTarget.querySelector('[data-user-selector-target="phone"]') : null)
+        let emailEl = this.hasEmailTarget ? this.emailTarget : (this.hasWrapperTarget ? this.wrapperTarget.querySelector('[data-user-selector-target="email"]') : null)
 
-        if (this.hasNameTarget) this.nameTarget.textContent = name
-        if (this.hasPhoneTarget) this.phoneTarget.textContent = phone || 'N/A'
-        if (this.hasEmailTarget) this.emailTarget.textContent = email
+        if (nameEl) nameEl.textContent = name
+        if (phoneEl) phoneEl.textContent = phone || 'N/A'
+        if (emailEl) emailEl.textContent = email
     }
 }
