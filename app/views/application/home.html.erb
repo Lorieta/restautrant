@@ -1,13 +1,7 @@
 <div class="home">
   <% if logged_in? %>
     <h1>Welcome back, <%= current_user.name %>!</h1>
-    <div class="mt-3">
-      <h2>Timeslots - <%= @month.strftime('%B %Y') if defined?(@month) %></h2>
-
-      <div class="mb-2">
-        <%= link_to "Previous", root_path(start_date: (@month - 1.month).to_date), class: 'btn btn-secondary' %>
-        <%= link_to "Next", root_path(start_date: (@month + 1.month).to_date), class: 'btn btn-secondary' %>
-      </div>
+   
 
       <%# Render a month calendar using simple_calendar (pass the timeslots collection and a start_date) %>
       <%= month_calendar(start_date: @month) do |date| %>
@@ -15,17 +9,19 @@
           <strong><%= date.day %></strong>
 
           <% slots = @timeslots_by_date[date] || @timeslots_by_date[date.to_date] || [] %>
-          <% slots.each do |ts| %>
-            <div style="margin-top:4px;">
+          <%# Only show timeslots that are open or that belong to the current user %>
+          <% visible_slots = slots.select do |ts|
+               ts.reservations.empty? || ts.reservations.any? { |r| r.user_id == current_user.id }
+             end %>
+          <% visible_slots.each do |ts| %>
+            <div class="d-flex flex-column align-items-center" style="margin-top:4px;">
               <small><%= ts.start_time.strftime('%H:%M') %> - <%= ts.end_time&.strftime('%H:%M') %></small>
-              <%# Show badge if there are reservations; highlight if current_user has a reservation for this slot %>
+              <%# Show badge if the current_user has a reservation for this slot %>
               <% reservation = ts.reservations.find { |r| r.user_id == current_user.id } %>
               <% if reservation %>
-                <%= reservation_status_badge(reservation) %>
-              <% elsif ts.reservations.any? %>
-                <span class="badge bg-danger ms-2"><%= ts.reservations.count %></span>
-              <% else %>
-                <%= link_to 'Book', new_reservation_path(timeslot_id: ts.id), class: 'btn btn-sm btn-primary ms-2' %>
+                <div class="mt-1"><%= reservation_status_badge(reservation) %></div>
+              <% elsif ts.reservations.empty? %>
+                <%= link_to 'Book', new_reservation_path(timeslot_id: ts.id), class: 'btn btn-sm btn-primary mt-1' %>
               <% end %>
             </div>
           <% end %>
