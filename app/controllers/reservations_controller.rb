@@ -28,7 +28,15 @@ class ReservationsController < ApplicationController
 
     # GET /reservations/confirm — build the preview reservation
     if params[:reservation].present?
-      @reservation = current_user.reservations.build(reservation_params)
+      # Build a preview reservation. Admins may preview reservations for other users
+      rp = reservation_params.to_h
+      if current_user.admin? && rp[:user_id].present?
+        @reservation = Reservation.new(rp)
+      else
+        # Ensure non-admins (and absent user_id) are associated with the current user
+        @reservation = current_user.reservations.build(rp.except(:user_id))
+      end
+
       prepare_form_dependencies(selected_timeslot_id: @reservation.timeslot_id)
 
       if @reservation.invalid?
@@ -43,7 +51,14 @@ class ReservationsController < ApplicationController
   end
 
   def create
-    @reservation = current_user.reservations.build(reservation_params)
+    rp = reservation_params.to_h
+
+    # Allow admins to create reservations for other users via user_id. Non-admins are always the current_user.
+    @reservation = if current_user.admin? && rp["user_id"].present?
+      Reservation.new(rp)
+    else
+      current_user.reservations.build(rp.except(:user_id))
+    end
 
     if @reservation.save
       redirect_to @reservation, notice: "Reservation created successfully!", status: :see_other
@@ -165,7 +180,7 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:table_id, :timeslot_id, :num_people, :status)
+    params.require(:reservation).permit(:table_id, :timeslot_id, :num_people, :status, :user_id)
   end
 
   def prepare_form_dependencies(selected_timeslot_id: nil)
@@ -196,6 +211,8 @@ class ReservationsController < ApplicationController
     else
       @tables = Table.all
     end
+    # Provide user list for admin user selection in the form
+    @users = User.order(:name) if current_user.admin?
   end
 
   public

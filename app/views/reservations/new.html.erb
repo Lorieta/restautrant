@@ -3,23 +3,27 @@
     <div class="row">
       <div class="col-md-8 mx-auto">
         <div class="card">
-          <div class="card-body" data-controller="timeslot-selector">
+            <div class="card-body" data-controller="timeslot-selector<%= ' user-selector' if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>">
             <h2 class="card-title">New Reservation</h2>
 
             <%= render "shared/error_messages", object: @reservation %>
 
-            <%# Show current user's contact info (read-only snapshot) %>
-            <section class="mb-3 contact-info">
+            <%# Contact details: will update when a different user is selected (via Stimulus) %>
+            <% if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>
+              <section class="mb-3 contact-info" data-user-selector-target="wrapper" data-users='<%= (@users || [current_user]).map { |u| { id: u.id, name: u.name, phone: u.phone, email: u.email } }.to_json %>'>
+            <% else %>
+              <section class="mb-3 contact-info">
+            <% end %>
               <h5 class="mb-2">Contact details</h5>
               <dl class="row reservation-summary">
                 <dt class="col-sm-3 text-muted">Name</dt>
-                <dd class="col-sm-9"><span class="fw-bold"><%= current_user.name %></span></dd>
+                <dd class="col-sm-9"><span class="fw-bold" <%= 'data-user-selector-target="name"' if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>><%= current_user.name %></span></dd>
 
                 <dt class="col-sm-3 text-muted">Phone</dt>
-                <dd class="col-sm-9"><span class="text-muted"><%= current_user.phone.presence || 'N/A' %></span></dd>
+                <dd class="col-sm-9"><span class="text-muted" <%= 'data-user-selector-target="phone"' if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>><%= current_user.phone.presence || 'N/A' %></span></dd>
 
                 <dt class="col-sm-3 text-muted">Email</dt>
-                <dd class="col-sm-9"><span class="text-muted"><%= current_user.email %></span></dd>
+                <dd class="col-sm-9"><span class="text-muted" <%= 'data-user-selector-target="email"' if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>><%= current_user.email %></span></dd>
               </dl>
             </section>
 
@@ -38,7 +42,19 @@
               </div>
             <% end %>
 
+
             <%= form_with model: @reservation, local: true do |f| %>
+
+              <%# User selector (admins only). Selecting a user will update the contact details above. %>
+              <% if defined?(current_user) && current_user.respond_to?(:admin?) && current_user.admin? %>
+                <p>
+                  <strong>For user:</strong><br>
+                  <%= f.collection_select :user_id, @users || User.none, :id, :name, { prompt: "Select a user", selected: (@reservation.user_id || current_user.id) }, { data: { action: "change->user-selector#onUserChange", "user-selector-target": "select" } } %>
+                </p>
+              <% else %>
+                <%# Ensure user_id is still submitted (non-admins) but hidden and fixed to current_user %>
+                <%= f.hidden_field :user_id, value: current_user.id %>
+              <% end %>
 
               <p>
                 <strong>Table:</strong><br>
@@ -75,49 +91,3 @@
   </div>
 </div>
 
-<hr>
-<section class="mt-4">
-  <h3>Availability</h3>
-
-  <% if @timeslots_by_date.blank? %>
-    <p class="text-muted">No upcoming timeslots are currently available. Please check back later.</p>
-  <% else %>
-    <% @timeslots_by_date.sort.each do |date, slots| %>
-      <div class="card mb-3">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <strong><%= date.strftime('%A, %B %-d, %Y') %></strong>
-          <span class="badge bg-secondary"><%= pluralize(slots.size, 'slot') %></span>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-sm mb-0">
-            <thead>
-              <tr>
-                <th scope="col">Time</th>
-                <th scope="col" class="text-end">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% slots.each do |slot| %>
-                <% available_tables = available_tables_count(slot) %>
-                <tr class="<%= 'table-active' if @selected_timeslot&.id == slot.id %>" data-timeslot-selector-target="availabilityRow" data-timeslot-id="<%= slot.id %>">
-                  <td>
-                    <strong><%= slot.start_time&.strftime('%I:%M %p') %></strong>
-                    &ndash;
-                    <%= slot.end_time ? slot.end_time.strftime('%I:%M %p') : 'Open-ended' %>
-                  </td>
-                  <td class="text-end">
-                    <% if available_tables_for(slot).any? %>
-                      <%= link_to 'Select slot', new_reservation_path(timeslot_id: slot.id), class: 'btn btn-sm btn-outline-primary' %>
-                    <% else %>
-                      <span class="text-muted">Fully booked</span>
-                    <% end %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    <% end %>
-  <% end %>
-</section>
